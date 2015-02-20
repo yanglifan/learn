@@ -2,6 +2,7 @@ package yanglifan.learn.concurrency.threadpool;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class ExecutorBuilder {
     private int corePoolSize;
@@ -34,26 +35,19 @@ public class ExecutorBuilder {
         }
     }
 
-    public ExecutorService build() {
-        return build(null);
-    }
-
-    public ExecutorService build(String name) {
+    public ThreadPoolExecutor buildExecutor(String name, Supplier<ThreadPoolExecutor> threadPoolExecutorSupplier) {
         if (name != null) {
             initThreadFactoryIfNecessary();
             threadFactory.setThreadNamePrefix(name);
         }
 
-        if (corePoolSize == 0)
-            corePoolSize = Runtime.getRuntime().availableProcessors();
-
-        maxPoolSize = maxPoolSize == 0 ? corePoolSize : maxPoolSize;
+        configurePoolSize();
 
         if (workQueue == null) {
             workQueue = new LinkedBlockingQueue<>();
         }
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0, TimeUnit.SECONDS, workQueue);
+        ThreadPoolExecutor threadPoolExecutor = threadPoolExecutorSupplier.get();
 
         if (threadFactory != null)
             threadPoolExecutor.setThreadFactory(threadFactory);
@@ -61,22 +55,29 @@ public class ExecutorBuilder {
         return threadPoolExecutor;
     }
 
+    private void configurePoolSize() {
+        if (corePoolSize == 0)
+            corePoolSize = Runtime.getRuntime().availableProcessors();
+
+        maxPoolSize = maxPoolSize == 0 ? corePoolSize : maxPoolSize;
+    }
+
+    public ExecutorService build() {
+        return build(null);
+    }
+
+    public ExecutorService build(String name) {
+        return buildExecutor(name,
+                () -> new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0, TimeUnit.SECONDS, workQueue));
+    }
+
     public ScheduledExecutorService buildScheduled() {
         return buildScheduled(null);
     }
 
     public ScheduledExecutorService buildScheduled(String name) {
-        if (name != null) {
-            initThreadFactoryIfNecessary();
-            threadFactory.setThreadNamePrefix(name);
-        }
-
-        ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(corePoolSize);
-
-        if (threadFactory != null)
-            scheduler.setThreadFactory(threadFactory);
-
-        return scheduler;
+        return (ScheduledExecutorService) buildExecutor(name,
+                () -> new ScheduledThreadPoolExecutor(corePoolSize));
     }
 
     private class InternalThreadFactory implements ThreadFactory {
