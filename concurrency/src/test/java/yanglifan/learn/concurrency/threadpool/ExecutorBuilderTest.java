@@ -11,16 +11,23 @@ import static org.junit.Assert.assertTrue;
 public class ExecutorBuilderTest {
     @Test
     public void testBuildThreadPoolExecutor() throws Exception {
-        ExecutorService executorService = ExecutorBuilder.newBuilder().corePoolSize(10).build("MyThread");
-        assertThat(((ThreadPoolExecutor) executorService).getCorePoolSize(), is(10));
-        Future<String> future = executorService.submit(() -> Thread.currentThread().getName());
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().corePoolSize(10).build("MyThread");
+        assertThat(executor.getCorePoolSize(), is(10));
+        Future<String> future = executor.submit(() -> Thread.currentThread().getName());
         assertTrue(future.get().contains("MyThread-"));
+        assertThat(executor.getKeepAliveTime(TimeUnit.SECONDS), is(0L));
     }
 
     @Test
     public void test_max_size() {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().maxPoolSize(10).build();
         assertThat(executor.getMaximumPoolSize(), is(10));
+    }
+
+    @Test
+    public void test_keep_alive() {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().keepAliveSeconds(10).build();
+        assertThat(executor.getKeepAliveTime(TimeUnit.SECONDS), is(10L));
     }
 
     @Test

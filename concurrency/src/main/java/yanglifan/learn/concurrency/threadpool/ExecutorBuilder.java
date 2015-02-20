@@ -7,8 +7,9 @@ import java.util.function.Supplier;
 public class ExecutorBuilder {
     private int corePoolSize;
     private int maxPoolSize;
-    private InternalThreadFactory threadFactory;
+    private long keepAlive;
     private BlockingQueue<Runnable> workQueue;
+    private InternalThreadFactory threadFactory;
 
     public static ExecutorBuilder newBuilder() {
         return new ExecutorBuilder();
@@ -21,6 +22,11 @@ public class ExecutorBuilder {
 
     public ExecutorBuilder maxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
+        return this;
+    }
+
+    public ExecutorBuilder keepAliveSeconds(int keepAlive) {
+        this.keepAlive = keepAlive;
         return this;
     }
 
@@ -51,6 +57,10 @@ public class ExecutorBuilder {
 
         if (threadFactory != null)
             threadPoolExecutor.setThreadFactory(threadFactory);
+
+        if (keepAlive >= 0) {
+            threadPoolExecutor.setKeepAliveTime(keepAlive, TimeUnit.SECONDS);
+        }
 
         return threadPoolExecutor;
     }
