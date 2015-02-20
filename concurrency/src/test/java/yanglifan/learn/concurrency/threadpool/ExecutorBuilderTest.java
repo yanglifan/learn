@@ -19,6 +19,15 @@ public class ExecutorBuilderTest {
     }
 
     @Test
+    public void test_simple_config() {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().build();
+        assertThat(executor.getCorePoolSize(), is(Runtime.getRuntime().availableProcessors()));
+        assertThat(executor.getMaximumPoolSize(), is(Runtime.getRuntime().availableProcessors()));
+        assertThat(executor.getKeepAliveTime(TimeUnit.SECONDS), is(0L));
+        assertTrue(executor.getQueue() instanceof LinkedBlockingQueue);
+    }
+
+    @Test
     public void test_max_size() {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().maxPoolSize(10).build();
         assertThat(executor.getMaximumPoolSize(), is(10));
