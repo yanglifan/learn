@@ -25,6 +25,7 @@ public class ExecutorBuilderTest {
         assertThat(executor.getMaximumPoolSize(), is(Runtime.getRuntime().availableProcessors()));
         assertThat(executor.getKeepAliveTime(TimeUnit.SECONDS), is(0L));
         assertTrue(executor.getQueue() instanceof LinkedBlockingQueue);
+        assertTrue(executor.getRejectedExecutionHandler() instanceof ThreadPoolExecutor.AbortPolicy);
     }
 
     @Test
@@ -43,6 +44,13 @@ public class ExecutorBuilderTest {
     public void test_work_queue() {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().workQueue(new ArrayBlockingQueue<>(100)).build();
         assertTrue(executor.getQueue() instanceof ArrayBlockingQueue);
+    }
+
+    @Test
+    public void test_reject_exec_handler() {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder()
+                .rejectHandler(new ThreadPoolExecutor.DiscardPolicy()).build();
+        assertTrue(executor.getRejectedExecutionHandler() instanceof ThreadPoolExecutor.DiscardPolicy);
     }
 
     @Test

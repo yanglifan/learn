@@ -10,6 +10,7 @@ public class ExecutorBuilder {
     private long keepAlive;
     private BlockingQueue<Runnable> workQueue;
     private InternalThreadFactory threadFactory;
+    private RejectedExecutionHandler handler;
 
     public static ExecutorBuilder newBuilder() {
         return new ExecutorBuilder();
@@ -32,6 +33,11 @@ public class ExecutorBuilder {
 
     public ExecutorBuilder workQueue(BlockingQueue<Runnable> queue) {
         this.workQueue = queue;
+        return this;
+    }
+
+    public ExecutorBuilder rejectHandler(RejectedExecutionHandler handler) {
+        this.handler = handler;
         return this;
     }
 
@@ -60,6 +66,10 @@ public class ExecutorBuilder {
 
         if (keepAlive >= 0) {
             threadPoolExecutor.setKeepAliveTime(keepAlive, TimeUnit.SECONDS);
+        }
+
+        if (handler != null) {
+            threadPoolExecutor.setRejectedExecutionHandler(handler);
         }
 
         return threadPoolExecutor;
