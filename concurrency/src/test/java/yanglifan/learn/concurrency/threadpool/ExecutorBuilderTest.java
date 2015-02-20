@@ -54,6 +54,12 @@ public class ExecutorBuilderTest {
     }
 
     @Test
+    public void test_simple_scheduled() {
+        ScheduledThreadPoolExecutor scheduler = (ScheduledThreadPoolExecutor) ExecutorBuilder.newBuilder().buildScheduled();
+        assertThat(scheduler.getCorePoolSize(), is(Runtime.getRuntime().availableProcessors()));
+    }
+
+    @Test
     public void testBuildScheduleThreadPoolExecutor() throws Exception {
         ScheduledExecutorService scheduler = ExecutorBuilder.newBuilder().corePoolSize(10).buildScheduled("MyThread");
         assertThat(((ThreadPoolExecutor) scheduler).getCorePoolSize(), is(10));
