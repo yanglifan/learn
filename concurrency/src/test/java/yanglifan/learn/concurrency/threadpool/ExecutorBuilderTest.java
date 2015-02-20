@@ -24,6 +24,12 @@ public class ExecutorBuilderTest {
     }
 
     @Test
+    public void test_work_queue() {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().workQueue(new ArrayBlockingQueue<>(100)).build();
+        assertTrue(executor.getQueue() instanceof ArrayBlockingQueue);
+    }
+
+    @Test
     public void testBuildScheduleThreadPoolExecutor() throws Exception {
         ScheduledExecutorService scheduler = ExecutorBuilder.newBuilder().corePoolSize(10).buildScheduled("MyThread");
         assertThat(((ThreadPoolExecutor) scheduler).getCorePoolSize(), is(10));

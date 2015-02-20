@@ -7,6 +7,7 @@ public class ExecutorBuilder {
     private int corePoolSize;
     private int maxPoolSize;
     private InternalThreadFactory threadFactory;
+    private BlockingQueue<Runnable> workQueue;
 
     public static ExecutorBuilder newBuilder() {
         return new ExecutorBuilder();
@@ -19,6 +20,11 @@ public class ExecutorBuilder {
 
     public ExecutorBuilder maxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
+        return this;
+    }
+
+    public ExecutorBuilder workQueue(BlockingQueue<Runnable> queue) {
+        this.workQueue = queue;
         return this;
     }
 
@@ -38,9 +44,16 @@ public class ExecutorBuilder {
             threadFactory.setThreadNamePrefix(name);
         }
 
+        if (corePoolSize == 0)
+            corePoolSize = Runtime.getRuntime().availableProcessors();
+
         maxPoolSize = maxPoolSize == 0 ? corePoolSize : maxPoolSize;
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        if (workQueue == null) {
+            workQueue = new LinkedBlockingQueue<>();
+        }
+
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0, TimeUnit.SECONDS, workQueue);
 
         if (threadFactory != null)
             threadPoolExecutor.setThreadFactory(threadFactory);
