@@ -11,18 +11,24 @@ import static org.junit.Assert.assertTrue;
 public class ExecutorBuilderTest {
     @Test
     public void testBuildThreadPoolExecutor() throws Exception {
-        ExecutorService executorService = ExecutorBuilder.newBuilder().corePoolSize(10).threadNamePrefix("MyThread-").build(ExecutorService.class);
+        ExecutorService executorService = ExecutorBuilder.newBuilder().corePoolSize(10).build("MyThread");
         assertThat(((ThreadPoolExecutor) executorService).getCorePoolSize(), is(10));
         Future<String> future = executorService.submit(() -> Thread.currentThread().getName());
         assertTrue(future.get().contains("MyThread-"));
     }
 
     @Test
+    public void test_max_size() {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ExecutorBuilder.newBuilder().maxPoolSize(10).build();
+        assertThat(executor.getMaximumPoolSize(), is(10));
+    }
+
+    @Test
     public void testBuildScheduleThreadPoolExecutor() throws Exception {
-        ExecutorService executorService = ExecutorBuilder.newBuilder().corePoolSize(10).threadNamePrefix("MyThread-").build(ScheduledExecutorService.class);
-        assertThat(((ThreadPoolExecutor) executorService).getCorePoolSize(), is(10));
-        Future<String> future = executorService.submit(() -> Thread.currentThread().getName());
+        ScheduledExecutorService scheduler = ExecutorBuilder.newBuilder().corePoolSize(10).buildScheduled("MyThread");
+        assertThat(((ThreadPoolExecutor) scheduler).getCorePoolSize(), is(10));
+        Future<String> future = scheduler.submit(() -> Thread.currentThread().getName());
         assertTrue(future.get().contains("MyThread-"));
-        assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
+        assertTrue(scheduler instanceof ScheduledThreadPoolExecutor);
     }
 }

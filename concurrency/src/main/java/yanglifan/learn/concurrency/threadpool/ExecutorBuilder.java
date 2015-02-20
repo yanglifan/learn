@@ -22,36 +22,48 @@ public class ExecutorBuilder {
         return this;
     }
 
-    public ExecutorBuilder threadNamePrefix(String prefix) {
-        initThreadFactoryIfNecessary();
-        threadFactory.setThreadNamePrefix(prefix);
-        return this;
-    }
-
     private void initThreadFactoryIfNecessary() {
         if (threadFactory == null) {
             threadFactory = new InternalThreadFactory();
         }
     }
 
-    @SuppressWarnings("all")
-    public <T extends ExecutorService> T build(Class<T> executorClazz) {
-        maxPoolSize = maxPoolSize == 0 ? corePoolSize : maxPoolSize;
+    public ExecutorService build() {
+        return build(null);
+    }
 
-        ThreadPoolExecutor threadPoolExecutor = null;
-        if (executorClazz.equals(ExecutorService.class)) {
-            threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-        } else if (executorClazz.equals(ScheduledExecutorService.class)) {
-            threadPoolExecutor = new ScheduledThreadPoolExecutor(corePoolSize);
+    public ExecutorService build(String name) {
+        if (name != null) {
+            initThreadFactoryIfNecessary();
+            threadFactory.setThreadNamePrefix(name);
         }
 
-        if (threadPoolExecutor == null)
-            throw new IllegalArgumentException("Only ExecutorService or ScheduledExecutorService");
+        maxPoolSize = maxPoolSize == 0 ? corePoolSize : maxPoolSize;
+
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
         if (threadFactory != null)
             threadPoolExecutor.setThreadFactory(threadFactory);
 
-        return (T) threadPoolExecutor;
+        return threadPoolExecutor;
+    }
+
+    public ScheduledExecutorService buildScheduled() {
+        return buildScheduled(null);
+    }
+
+    public ScheduledExecutorService buildScheduled(String name) {
+        if (name != null) {
+            initThreadFactoryIfNecessary();
+            threadFactory.setThreadNamePrefix(name);
+        }
+
+        ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(corePoolSize);
+
+        if (threadFactory != null)
+            scheduler.setThreadFactory(threadFactory);
+
+        return scheduler;
     }
 
     private class InternalThreadFactory implements ThreadFactory {
@@ -68,7 +80,7 @@ public class ExecutorBuilder {
         public Thread newThread(Runnable r) {
             Thread thread = baseThreadFactory.newThread(r);
             if (threadNamePrefix != null)
-                thread.setName(threadNamePrefix + threadCount.getAndIncrement());
+                thread.setName(threadNamePrefix + "-" + threadCount.getAndIncrement());
             return thread;
         }
 
