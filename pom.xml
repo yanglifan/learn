@@ -12,6 +12,7 @@
     <modules>
         <module>concurrency</module>
         <module>codility</module>
+        <module>core</module>
     </modules>
 
     <build>
