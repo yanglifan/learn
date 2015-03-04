@@ -1,0 +1,64 @@
+package yanglifan.learn.concurrency.threadpool;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class SingleThreadPoolDemo {
+    ExecutorService executor;
+
+    @Before
+    public void setUp() throws Exception {
+        executor = Executors.newSingleThreadExecutor();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        executor.shutdown();
+        executor.awaitTermination(6, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void sleep_park_thread() {
+
+        executor.execute(() -> {
+            try {
+                System.out.println(new Date());
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("The first task exec at " + new Date());
+        });
+        executor.execute(() -> {
+            System.out.println("The second task exec at " + new Date());
+        });
+    }
+
+    @Test
+    public void wait_park_thread() {
+        final Object lock = new Object();
+        executor.execute(() -> {
+            synchronized (lock) {
+                try {
+                    System.out.println(new Date());
+                    lock.wait(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("The first task exec at " + new Date());
+        });
+
+        executor.execute(() -> {
+            System.out.println("The second task exec at " + new Date());
+        });
+    }
+}
