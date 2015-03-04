@@ -40,6 +40,22 @@ public class RejectedExecutionHandlerDemo {
         invokeRejectHandler();
     }
 
+    @Test(expected = RejectedExecutionException.class)
+    public void exec_after_shutdown() throws Exception {
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        executor.execute(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        executor.shutdown();
+        executor.execute(() -> {
+            System.out.println("should be reject");
+        });
+    }
+
     private void invokeRejectHandler() throws Exception {
         executor.execute(() -> {
             try {
