@@ -14,6 +14,12 @@ public class CustomThreadFactory {
             public Thread newThread(Runnable r) {
                 Thread t = threadFactory.newThread(r);
                 t.setName("MyThreadPool-" + threadNumber.getAndIncrement());
+                t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        // Do something. Like log
+                    }
+                });
                 return t;
             }
         });
