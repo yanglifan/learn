@@ -20,6 +20,8 @@ public class CustomThreadFactory {
                         // Do something. Like log
                     }
                 });
+                t.setDaemon(false);
+                t.setPriority(Thread.NORM_PRIORITY);
                 return t;
             }
         });
