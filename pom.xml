@@ -13,6 +13,7 @@
         <module>concurrency</module>
         <module>codility</module>
         <module>core</module>
+        <module>java8</module>
     </modules>
 
     <build>
