@@ -42,4 +42,13 @@ public class StreamExample {
 
         assertThat(optional.get().getId(), is(1));
     }
+
+    @Test
+    public void word_length() {
+        List<String> words = Arrays.asList("Oracle", "Java", "Magazine");
+        List<Integer> wordLengths = words.stream()
+                .map(String::length)
+                .collect(Collectors.toList());
+        assertThat(wordLengths, is(Arrays.asList(6, 4, 8)));
+    }
 }
