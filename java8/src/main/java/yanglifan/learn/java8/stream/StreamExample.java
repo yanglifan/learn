@@ -57,6 +57,12 @@ public class StreamExample {
         assertThat(max, is(3));
     }
 
+    @Test
+    public void int_stream() {
+        int sum = newTransactions().stream().mapToInt(t -> t.getValue().intValue()).sum();
+        assertThat(sum, is(130));
+    }
+
     private List<Transaction> newTransactions() {
         return Arrays.asList(
                 new Transaction(1, Transaction.TransactionType.GROCERY, new BigDecimal("10")),
