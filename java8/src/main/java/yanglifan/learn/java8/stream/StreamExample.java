@@ -31,12 +31,7 @@ public class StreamExample {
 
     @Test
     public void find_any_grocery() {
-        List<Transaction> transactions = Arrays.asList(
-                new Transaction(1, Transaction.TransactionType.GROCERY, new BigDecimal("10")),
-                new Transaction(2, Transaction.TransactionType.GROCERY, new BigDecimal("20")),
-                new Transaction(3, Transaction.TransactionType.SUPERMARKET, new BigDecimal("100")));
-
-        Optional<Transaction> optional = transactions.stream()
+        Optional<Transaction> optional = newTransactions().stream()
                 .filter(t -> t.getType() == Transaction.TransactionType.GROCERY)
                 .findAny();
 
@@ -60,5 +55,12 @@ public class StreamExample {
 
         int max = numbers.stream().reduce(2, Integer::max);
         assertThat(max, is(3));
+    }
+
+    private List<Transaction> newTransactions() {
+        return Arrays.asList(
+                new Transaction(1, Transaction.TransactionType.GROCERY, new BigDecimal("10")),
+                new Transaction(2, Transaction.TransactionType.GROCERY, new BigDecimal("20")),
+                new Transaction(3, Transaction.TransactionType.SUPERMARKET, new BigDecimal("100")));
     }
 }
