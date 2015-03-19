@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -57,10 +58,19 @@ public class StreamExample {
         assertThat(max, is(3));
     }
 
+    /**
+     * Performance better than normal stream?
+     */
     @Test
     public void int_stream() {
         int sum = newTransactions().stream().mapToInt(t -> t.getValue().intValue()).sum();
         assertThat(sum, is(130));
+    }
+
+    @Test
+    public void get_odd_numbers() {
+        List<Integer> odds = IntStream.rangeClosed(10, 20).filter(i -> i % 2 == 1).boxed().collect(Collectors.toList());
+        assertThat(odds, is(Arrays.asList(11, 13, 15, 17, 19)));
     }
 
     private List<Transaction> newTransactions() {
