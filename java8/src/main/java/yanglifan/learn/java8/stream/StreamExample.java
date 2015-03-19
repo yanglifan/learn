@@ -51,4 +51,14 @@ public class StreamExample {
                 .collect(Collectors.toList());
         assertThat(wordLengths, is(Arrays.asList(6, 4, 8)));
     }
+
+    @Test
+    public void reduce() {
+        List<Integer> numbers = Arrays.asList(1, 2, 3);
+        int sum = numbers.stream().reduce(0, (a, b) -> a + b);
+        assertThat(sum, is(6));
+
+        int max = numbers.stream().reduce(2, Integer::max);
+        assertThat(max, is(3));
+    }
 }
