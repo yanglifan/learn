@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -71,6 +72,12 @@ public class StreamExample {
     public void get_odd_numbers() {
         List<Integer> odds = IntStream.rangeClosed(10, 20).filter(i -> i % 2 == 1).boxed().collect(Collectors.toList());
         assertThat(odds, is(Arrays.asList(11, 13, 15, 17, 19)));
+    }
+
+    @Test
+    public void build_stream() {
+        Stream<Integer> streamFromNumbers = Stream.of(1, 2, 3, 4);
+        IntStream streamFromArray = Arrays.stream(new int[]{1, 2, 3, 4});
     }
 
     private List<Transaction> newTransactions() {
