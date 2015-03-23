@@ -2,7 +2,10 @@ package yanglifan.learn.java8.stream;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -78,6 +81,13 @@ public class StreamExample {
     public void build_stream() {
         Stream<Integer> streamFromNumbers = Stream.of(1, 2, 3, 4);
         IntStream streamFromArray = Arrays.stream(new int[]{1, 2, 3, 4});
+    }
+
+    @Test
+    public void count_file_line_number() throws IOException {
+        String myfileFullPath = getClass().getClassLoader().getResource("myfile.txt").getPath();
+        long numOfLines = Files.lines(Paths.get(myfileFullPath)).count();
+        assertThat(numOfLines, is(6L));
     }
 
     private List<Transaction> newTransactions() {
