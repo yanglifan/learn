@@ -90,6 +90,13 @@ public class StreamExample {
         assertThat(numOfLines, is(6L));
     }
 
+    @Test
+    public void infinite_iterate() {
+        Stream<Integer> numbers = Stream.iterate(0, n -> n + 10);
+        List<Integer> tenNumbers = numbers.limit(5).collect(Collectors.toList());
+        assertThat(tenNumbers, is(Arrays.asList(0, 10, 20, 30, 40)));
+    }
+
     private List<Transaction> newTransactions() {
         return Arrays.asList(
                 new Transaction(1, Transaction.TransactionType.GROCERY, new BigDecimal("10")),
