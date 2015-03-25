@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +22,21 @@ public class StreamExample {
         List<Transaction> transactions = TestUtils.newTransactions();
         long numOfGrocery = transactions.stream().filter(t -> t.getType() == Transaction.TransactionType.GROCERY).count();
         assertThat(numOfGrocery, is(2L));
+    }
+
+    @Test
+    public void foreach() {
+        Collection<Shape> shapes = TestUtils.newEmptyShapes();
+
+        shapes.forEach(s -> s.setColor(Color.GREEN));
+
+        shapes.stream()
+                .filter(s -> s.getColor() == Color.GREEN)
+                .forEach(s -> s.setColor(Color.RED));
+
+        for (Shape shape : shapes) {
+            assertThat(shape.getColor(), is(Color.RED));
+        }
     }
 
     @Test
