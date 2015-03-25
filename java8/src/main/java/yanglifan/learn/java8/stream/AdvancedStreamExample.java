@@ -5,11 +5,9 @@ import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -41,5 +39,20 @@ public class AdvancedStreamExample {
         Map<Transaction.TransactionType, List<Transaction>> tranMap =
                 transactions.stream().collect(Collectors.groupingBy(Transaction::getType));
         assertThat(tranMap.get(Transaction.TransactionType.GROCERY).size(), is(2));
+    }
+
+    @Test
+    public void parallelism() {
+        List<Transaction> transactions = TestUtils.newBigGroceryTransactions();
+        double average = transactions
+                .parallelStream()
+                .filter(t -> {
+                    System.out.println(Thread.currentThread().getName());
+                    return t.getType() == Transaction.TransactionType.GROCERY;
+                })
+                .mapToInt(t -> t.getValue().intValue())
+                .average()
+                .getAsDouble();
+        assertThat(average, is(10D));
     }
 }
