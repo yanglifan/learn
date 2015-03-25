@@ -17,6 +17,13 @@ import static org.junit.Assert.assertThat;
 
 public class StreamExample {
     @Test
+    public void basic() {
+        List<Transaction> transactions = TestUtils.newTransactions();
+        long numOfGrocery = transactions.stream().filter(t -> t.getType() == Transaction.TransactionType.GROCERY).count();
+        assertThat(numOfGrocery, is(2L));
+    }
+
+    @Test
     public void test_two_even_squares() {
         List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
         List<Integer> twoEvenSquares = numbers.stream()
