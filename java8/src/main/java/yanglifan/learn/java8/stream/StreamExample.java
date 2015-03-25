@@ -3,7 +3,6 @@ package yanglifan.learn.java8.stream;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -36,7 +35,7 @@ public class StreamExample {
 
     @Test
     public void find_any_grocery() {
-        Optional<Transaction> optional = newTransactions().stream()
+        Optional<Transaction> optional = TestUtils.newTransactions().stream()
                 .filter(t -> t.getType() == Transaction.TransactionType.GROCERY)
                 .findAny();
 
@@ -67,7 +66,7 @@ public class StreamExample {
      */
     @Test
     public void int_stream() {
-        int sum = newTransactions().stream().mapToInt(t -> t.getValue().intValue()).sum();
+        int sum = TestUtils.newTransactions().stream().mapToInt(t -> t.getValue().intValue()).sum();
         assertThat(sum, is(130));
     }
 
@@ -97,10 +96,4 @@ public class StreamExample {
         assertThat(tenNumbers, is(Arrays.asList(0, 10, 20, 30, 40)));
     }
 
-    private List<Transaction> newTransactions() {
-        return Arrays.asList(
-                new Transaction(1, Transaction.TransactionType.GROCERY, new BigDecimal("10")),
-                new Transaction(2, Transaction.TransactionType.GROCERY, new BigDecimal("20")),
-                new Transaction(3, Transaction.TransactionType.SUPERMARKET, new BigDecimal("100")));
-    }
 }

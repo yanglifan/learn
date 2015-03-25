@@ -5,7 +5,9 @@ import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,5 +33,13 @@ public class AdvancedStreamExample {
                 .distinct()
                 .collect(Collectors.toList());
         assertThat(distinctElements2, is(Arrays.asList("aaa", "bbb", "ccc", "ddd")));
+    }
+
+    @Test
+    public void group_by() {
+        List<Transaction> transactions = TestUtils.newTransactions();
+        Map<Transaction.TransactionType, List<Transaction>> tranMap =
+                transactions.stream().collect(Collectors.groupingBy(Transaction::getType));
+        assertThat(tranMap.get(Transaction.TransactionType.GROCERY).size(), is(2));
     }
 }
