@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>concurrency</module>
+        <module>java-concurrency</module>
         <module>codility</module>
         <module>java-core</module>
         <module>java8</module>
