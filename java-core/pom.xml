@@ -10,5 +10,5 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>core</artifactId>
+    <artifactId>java-core</artifactId>
 </project>
