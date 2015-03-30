@@ -1,6 +1,5 @@
 package yanglifan.learn.codility.lesson.prefix_sums;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
