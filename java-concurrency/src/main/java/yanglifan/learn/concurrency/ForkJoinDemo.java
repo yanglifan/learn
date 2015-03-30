@@ -44,13 +44,13 @@ class Document {
 class Folder {
     private final List<Folder> subFolders;
     private final List<Document> documents;
-    private String fullPath;
 
     Folder(List<Folder> subFolders, List<Document> documents) {
         this.subFolders = subFolders;
         this.documents = documents;
     }
 
+    @SuppressWarnings("all")
     static Folder fromDirectory(File dir) throws IOException {
         List<Document> documents = new LinkedList<>();
         List<Folder> subFolders = new LinkedList<>();
@@ -62,9 +62,7 @@ class Folder {
             }
         }
 
-        Folder folder = new Folder(subFolders, documents);
-        folder.fullPath = dir.getAbsolutePath();
-        return folder;
+        return new Folder(subFolders, documents);
     }
 
     List<Folder> getSubFolders() {

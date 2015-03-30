@@ -20,7 +20,9 @@ public class StreamExample {
     @Test
     public void basic() {
         List<Transaction> transactions = TestUtils.newTransactions();
-        long numOfGrocery = transactions.stream().filter(t -> t.getType() == Transaction.TransactionType.GROCERY).count();
+        long numOfGrocery = transactions.stream()
+                .filter(t -> t.getType() == Transaction.TransactionType.GROCERY)
+                .count();
         assertThat(numOfGrocery, is(2L));
     }
 

@@ -16,8 +16,8 @@ public class AdvancedStreamExample {
     @Test
     public void flat_map() throws Exception {
         String filePath = getClass().getClassLoader().getResource("stuff.txt").getPath();
-        List<String> distinctElements = Files.lines(Paths.get(filePath))
-                .map(line -> line.split("\\s")) // Stream<String[]>
+        List<String> distinctElements = Files.lines(Paths.get(filePath)) // Stream<String>
+                .map(line -> line.split("\\s")) // Stream<String[]> Stream<String>
                 .flatMap(Arrays::stream)
                 .distinct()
                 .collect(Collectors.toList());
