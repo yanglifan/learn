@@ -83,8 +83,7 @@ public class Sort {
                 tmp = array[0];
                 array[0] = array[count];
                 array[count] = tmp;
-                count--;
-                heapify(count);
+                heapify(--count);
             }
             return array;
         }
