@@ -35,8 +35,14 @@ public class SortTest {
     }
 
     @Test
-    public void testSort() throws Exception {
+    public void testQuickSort() throws Exception {
         int[] r = Sort.quickSort(source);
+        assertThat(r, is(result));
+    }
+
+    @Test
+    public void testHeapSort() {
+        int[] r = Sort.heapSort(source);
         assertThat(r, is(result));
     }
 }

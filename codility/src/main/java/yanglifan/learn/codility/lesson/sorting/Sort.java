@@ -15,7 +15,7 @@ public class Sort {
             rangeStack.push(new int[]{0, array.length - 1});
         }
 
-        public int[] quickSort() {
+        public int[] sort() {
             int[] position = rangeStack.pop();
 
             while (position != null) {
@@ -67,8 +67,56 @@ public class Sort {
         }
     }
 
+    private static class HeapSort {
+        int[] array;
+
+        public HeapSort(int[] array) {
+            this.array = array;
+        }
+
+        public int[] sort() {
+            heapify(array.length - 1);
+            int count = array.length - 1;
+            int tmp;
+
+            while (count > 0) {
+                tmp = array[0];
+                array[0] = array[count];
+                array[count] = tmp;
+                count--;
+                heapify(count);
+            }
+            return array;
+        }
+
+        private void heapify(int count) {
+            for (int i = (count - 1) / 2; i >= 0; i--) {
+                shiftDown(i, count);
+            }
+        }
+
+        private void shiftDown(int start, int end) {
+            int parentIdx = start;
+
+            for (int leftIdx = parentIdx * 2 + 1; leftIdx <= end; parentIdx = leftIdx, leftIdx = leftIdx * 2 + 1) {
+                int largeIdx = leftIdx;
+
+                if (leftIdx < end && array[leftIdx] < array[leftIdx + 1]) largeIdx++;
+                if (array[parentIdx] < array[largeIdx]) {
+                    int tmp = array[parentIdx];
+                    array[parentIdx] = array[largeIdx];
+                    array[largeIdx] = tmp;
+                }
+            }
+        }
+    }
+
     public static int[] quickSort(int[] array) {
-        return (new QuickSort(array)).quickSort();
+        return (new QuickSort(array)).sort();
+    }
+
+    public static int[] heapSort(int[] array) {
+        return (new HeapSort(array)).sort();
     }
 
     private static void print(int[] array, int start, int end) {
