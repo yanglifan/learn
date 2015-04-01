@@ -97,11 +97,8 @@ public class Sort {
 
         private void shiftDown(int start, int end) {
             int parentIdx = start;
-
             for (int leftIdx = parentIdx * 2 + 1; leftIdx <= end; parentIdx = leftIdx, leftIdx = leftIdx * 2 + 1) {
-                int largeIdx = leftIdx;
-
-                if (leftIdx < end && array[leftIdx] < array[leftIdx + 1]) largeIdx++;
+                int largeIdx = leftIdx < end && array[leftIdx] < array[leftIdx + 1] ? leftIdx + 1 : leftIdx;
                 if (array[parentIdx] < array[largeIdx]) {
                     int tmp = array[parentIdx];
                     array[parentIdx] = array[largeIdx];
