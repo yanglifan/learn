@@ -30,6 +30,7 @@ public class SortTest {
                 {new int[]{6, 11, 2, 3}, new int[]{2, 3, 6, 11}},
                 {new int[]{0, 1, 2, 3}, new int[]{0, 1, 2, 3}},
                 {new int[]{3, 2, 1, 0}, new int[]{0, 1, 2, 3}},
+                {new int[]{0}, new int[]{0}},
                 {bigIntArray, bigIntResult}
         });
     }
