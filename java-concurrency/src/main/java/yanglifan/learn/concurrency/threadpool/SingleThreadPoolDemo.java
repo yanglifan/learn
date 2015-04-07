@@ -5,10 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class SingleThreadPoolDemo {
     ExecutorService executor;
@@ -60,5 +57,18 @@ public class SingleThreadPoolDemo {
         executor.execute(() -> {
             System.out.println("The second task exec at " + new Date());
         });
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void change_single_thread_pool_core_size() {
+        ExecutorService single = Executors.newSingleThreadExecutor();
+        ((ThreadPoolExecutor) single).setCorePoolSize(2);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void unconfigurable() {
+        ExecutorService source = ExecutorBuilder.newBuilder().build();
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.unconfigurableExecutorService(source);
+        executor.setCorePoolSize(2);
     }
 }
