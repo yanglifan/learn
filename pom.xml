@@ -11,7 +11,7 @@
 
     <modules>
         <module>java-concurrency</module>
-        <module>codility</module>
+        <module>algorithm</module>
         <module>java-core</module>
         <module>java8</module>
     </modules>
@@ -24,6 +24,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
