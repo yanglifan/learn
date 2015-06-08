@@ -23,7 +23,6 @@
  */
 
 namespace cpp shared
-namespace d share // "shared" would collide with the eponymous D keyword.
 namespace java yanglifan.learn.framework.thrift
 namespace perl shared
 namespace php shared

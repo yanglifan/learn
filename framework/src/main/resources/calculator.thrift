@@ -63,7 +63,6 @@ include "shared.thrift"
  * target languages.
  */
 namespace cpp tutorial
-namespace d tutorial
 namespace java yanglifan.learn.framework.thrift
 namespace php tutorial
 namespace perl tutorial
