@@ -13,4 +13,7 @@ public interface Service {
 
     @ThriftMethod
     ListenableFuture<String> asyncMethod(String message);
+
+    @ThriftMethod(oneway = true)
+    void onewayMethod(String message) throws Exception;
 }

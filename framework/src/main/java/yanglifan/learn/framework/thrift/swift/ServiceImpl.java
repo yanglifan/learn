@@ -49,6 +49,12 @@ public class ServiceImpl implements Service {
         });
     }
 
+    @Override
+    public void onewayMethod(String message) throws Exception {
+        Thread.sleep(5000);
+        LOGGER.info("Oneway method receives a message [{}]", message);
+    }
+
     public static void main(String[] args) throws Exception {
         ServiceImpl service = new ServiceImpl();
         NiftyProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), Collections.emptyList(), service);
@@ -65,6 +71,9 @@ public class ServiceImpl implements Service {
         LOGGER.info("Receive the future");
         String result = listenableFuture.get();
         LOGGER.info("Receive the result [{}]", result);
+
+        client.onewayMethod("Oneway message");
+        LOGGER.info("The client has sent an oneway message");
 
         server.close();
     }
