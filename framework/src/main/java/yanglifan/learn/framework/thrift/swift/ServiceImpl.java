@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import static com.google.common.net.HostAndPort.fromParts;
 
-public class SwiftService implements Service {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwiftService.class);
+public class ServiceImpl implements Service {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceImpl.class);
 
     private final List<LogEntry> messages = new ArrayList<>();
 
@@ -50,18 +50,18 @@ public class SwiftService implements Service {
     }
 
     public static void main(String[] args) throws Exception {
-        SwiftService scribeService = new SwiftService();
-        NiftyProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), Collections.emptyList(), scribeService);
+        ServiceImpl service = new ServiceImpl();
+        NiftyProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), Collections.emptyList(), service);
         ThriftServer server = new ThriftServer(processor, new ThriftServerConfig().setPort(8899));
         server.start();
         LOGGER.info("Start Swift Nifty server...");
 
         ThriftClientManager clientManager = new ThriftClientManager();
         FramedClientConnector connector = new FramedClientConnector(fromParts("localhost", 8899));
-        Service swiftClient = clientManager.createClient(connector, Service.class).get();
-        swiftClient.log(Collections.singletonList(new LogEntry("c1", "m1")));
+        Service client = clientManager.createClient(connector, Service.class).get();
+        client.log(Collections.singletonList(new LogEntry("c1", "m1")));
 
-        ListenableFuture<String> listenableFuture = swiftClient.asyncMethod("Message A");
+        ListenableFuture<String> listenableFuture = client.asyncMethod("Message A");
         LOGGER.info("Receive the future");
         String result = listenableFuture.get();
         LOGGER.info("Receive the result [{}]", result);
