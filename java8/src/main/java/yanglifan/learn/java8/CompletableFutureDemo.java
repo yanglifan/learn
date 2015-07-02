@@ -15,7 +15,7 @@ public class CompletableFutureDemo {
 
     @Test
     public void test_then_accept() throws Exception {
-        final CompletableFuture<String> responseFuture = asyncCode();
+        final CompletableFuture<String> responseFuture = asyncCall();
         Thread.sleep(10_000);
         responseFuture.thenAccept(this::send);
         LOGGER.info("After thenAccept");
@@ -23,11 +23,22 @@ public class CompletableFutureDemo {
 
     @Test
     public void test_then_accept_async() throws Exception {
-        final CompletableFuture<String> responseFuture = asyncCode();
+        final CompletableFuture<String> responseFuture = asyncCall();
         Thread.sleep(10_000);
         responseFuture.thenAcceptAsync(this::send);
         LOGGER.info("After thenAccept");
         Thread.sleep(5_000);
+    }
+
+    @Test
+    public void test_exceptionally() throws Exception {
+        final CompletableFuture<String> responseFuture = asyncCall(true);
+        responseFuture.exceptionally(ex -> {
+            LOGGER.error("Exception happen", ex);
+            return "Failed";
+        }).thenAcceptAsync(this::send);
+        LOGGER.info("After thenAccept");
+        Thread.sleep(10_000);
     }
 
     private void send(String s) {
@@ -39,7 +50,12 @@ public class CompletableFutureDemo {
         LOGGER.info("Send a message [ {} ]", s);
     }
 
-    private CompletableFuture<String> asyncCode() {
+
+    private CompletableFuture<String> asyncCall() {
+        return asyncCall(false);
+    }
+
+    private CompletableFuture<String> asyncCall(boolean withEx) {
         return CompletableFuture.supplyAsync(() -> {
             LOGGER.info("Start -> supplyAsync");
             try {
@@ -47,6 +63,11 @@ public class CompletableFutureDemo {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            if (withEx) {
+                throw new RuntimeException("I am evil");
+            }
+
             LOGGER.info("End -> supplyAsync");
             return "ASYNC MSG";
         }, executorService);
