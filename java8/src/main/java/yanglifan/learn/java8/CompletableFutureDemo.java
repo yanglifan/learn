@@ -1,8 +1,11 @@
 package yanglifan.learn.java8;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -43,6 +46,9 @@ public class CompletableFutureDemo {
 
     /**
      * Select the first finished task and get the return to execute.
+     *
+     * {@link CompletableFuture#applyToEither(CompletionStage, Function)} will apply the first finished task to a
+     * {@link Function} {@link CompletableFuture#acceptEither(CompletionStage, Consumer)} will use a {@link Consumer}
      */
     @Test
     public void test_accept_either() throws Exception {
