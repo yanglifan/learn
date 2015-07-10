@@ -41,6 +41,21 @@ public class CompletableFutureDemo {
         Thread.sleep(10_000);
     }
 
+    /**
+     * Select the first finished task and get the return to execute.
+     */
+    @Test
+    public void test_accept_either() throws Exception {
+        final CompletableFuture<String> future = asyncCall("First call", 2000);
+        CompletableFuture<String> anotherFuture = asyncCall("Second call", 1000);
+
+        future.acceptEither(anotherFuture, (msg) -> {
+           LOGGER.info("The msg returned is {}", msg);
+        });
+
+        Thread.sleep(10_000);
+    }
+
     private void send(String s) {
         try {
             Thread.sleep(5_000);
@@ -50,6 +65,20 @@ public class CompletableFutureDemo {
         LOGGER.info("Send a message [ {} ]", s);
     }
 
+    private CompletableFuture<String> asyncCall(String msg, int sleepTime) {
+        return CompletableFuture.supplyAsync(() -> {
+            LOGGER.info("Start -> supplyAsync");
+            try {
+                Thread.sleep(sleepTime
+                );
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LOGGER.info("End -> supplyAsync");
+            return msg;
+        }, executorService);
+    }
 
     private CompletableFuture<String> asyncCall() {
         return asyncCall(false);
