@@ -24,5 +24,8 @@ public class MethodReferenceDemo {
         Function<Integer, Integer> f = example::compareTo;
 
         assertThat(f.apply(2), is(-1));
+
+        Function<Number, String> numberToStringFunction = Number::toString;
+        assertThat(numberToStringFunction.apply(1), is("1"));
     }
 }
