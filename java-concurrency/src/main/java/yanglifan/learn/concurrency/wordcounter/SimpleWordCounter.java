@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleWordCounter {
@@ -32,4 +33,8 @@ public class SimpleWordCounter {
         }
         System.out.println((System.currentTimeMillis() - startTime) + "ms");
     }
+}
+
+interface A extends Callable, Runnable {
+
 }

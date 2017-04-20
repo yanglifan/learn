@@ -1,8 +1,8 @@
 import org.junit.Test;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+        import java.io.File;
+        import java.util.ArrayList;
+        import java.util.List;
 
 public class MainTest {
     @Test
@@ -14,6 +14,8 @@ public class MainTest {
     public void instanceOf() {
         ArrayList arrayList = new ArrayList();
         System.out.println(arrayList instanceof List);
+        //language=JSON
+        String json = "{\"name\":\"yanglifan\"}";
     }
 }
 

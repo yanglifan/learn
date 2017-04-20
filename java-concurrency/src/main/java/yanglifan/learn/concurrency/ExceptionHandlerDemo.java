@@ -44,4 +44,9 @@ public class ExceptionHandlerDemo {
         });
         t.start();
     }
+
+    @Test
+    public void submit_ex() {
+
+    }
 }

@@ -71,4 +71,20 @@ public class SingleThreadPoolDemo {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.unconfigurableExecutorService(source);
         executor.setCorePoolSize(2);
     }
+
+    @Test
+    public void test_submit() throws Exception {
+        ExecutorService executorService = ExecutorBuilder.newBuilder().build();
+        Future<String> f = executorService.submit(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return "success";
+        });
+
+        f.get();
+    }
 }
