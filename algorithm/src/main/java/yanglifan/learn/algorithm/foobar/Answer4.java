@@ -22,6 +22,17 @@ public class Answer4 {
 
 class MatrixUtils {
     static Fraction[][] getInverseMatrix(Fraction[][] matrix) {
+        if (matrix.length == 2) {
+            Fraction part1 = matrix[0][0].multiply(matrix[1][1]).sub(matrix[0][1].multiply(matrix[1][0]));
+            part1 = new Fraction(part1.denominator, part1.numerator);
+            Fraction[][] inverseMatrix = new Fraction[2][2];
+            inverseMatrix[0][0] = matrix[1][1].multiply(part1);
+            inverseMatrix[0][1] = matrix[0][1].multiply(part1).multiply(new Fraction(-1, 1));
+            inverseMatrix[1][0] = matrix[1][0].multiply(part1).multiply(new Fraction(-1, 1));
+            inverseMatrix[1][1] = matrix[0][0].multiply(part1);
+            return inverseMatrix;
+        }
+
         Fraction[][] inverseMatrix = new Fraction[matrix.length][matrix[0].length];
         Fraction a = getMatrixResult(matrix);
         for (int i = 0; i < matrix.length; i++) {
