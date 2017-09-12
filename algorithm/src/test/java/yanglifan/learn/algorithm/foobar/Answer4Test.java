@@ -29,7 +29,7 @@ public class Answer4Test {
     @Test
     public void testFindSubMatrixIndices() {
         int[] indices = Answer4.findSubMatrixIndices(m1);
-        assertThat(indices, is(new Integer[]{0, 3}));
+        assertThat(indices, is(new Integer[]{0, 1}));
         indices = Answer4.findSubMatrixIndices(m2);
         assertThat(indices, is(new Integer[]{0, 1}));
     }
@@ -56,8 +56,12 @@ public class Answer4Test {
     }
 
     @Test
-    public void finalTest() {
+    public void finalTest1() {
         assertThat(Answer4.answer(m1), is(new int[]{0, 3, 2, 9, 14}));
+    }
+
+    @Test
+    public void finalTest2() {
         assertThat(Answer4.answer(m3), is(new int[]{7, 6, 8, 21}));
     }
 }

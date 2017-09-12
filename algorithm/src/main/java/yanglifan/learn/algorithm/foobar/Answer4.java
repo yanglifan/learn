@@ -76,11 +76,6 @@ public class Answer4 {
         for (int index : nonAbsorbingMatrixIndices) {
             int[] newArray = new int[m[index].length];
             for (int i = 0; i < m[index].length; i++) {
-                if (m[index][i] == 0) {
-                    newArray[i] = m[index][i];
-                    continue;
-                }
-
                 if (contains(i, nonAbsorbingMatrixIndices)) {
                     newArray[i + m[index].length - nonAbsorbingMatrixIndices.length] = m[index][i];
                 } else {
