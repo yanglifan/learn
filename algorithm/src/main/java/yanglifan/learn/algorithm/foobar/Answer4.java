@@ -16,7 +16,23 @@ import java.util.List;
  */
 public class Answer4 {
     public static int[] answer(int[][] m) {
+        int width = m[0].length;
+
         int[] nonAbsorbingMatrixIndices = findSubMatrixIndices(m);
+        int[][] matrixR = findSubMatrix(
+                m,
+                nonAbsorbingMatrixIndices,
+                0,
+                width - nonAbsorbingMatrixIndices.length - 1
+        );
+
+        int[][] matrixQ = findSubMatrix(
+                m,
+                nonAbsorbingMatrixIndices,
+                width - nonAbsorbingMatrixIndices.length,
+                nonAbsorbingMatrixIndices.length - 1
+        );
+
         return null;
     }
 
