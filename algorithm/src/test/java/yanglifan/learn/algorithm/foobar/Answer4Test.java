@@ -25,6 +25,7 @@ public class Answer4Test {
     };
 
     private int[][] m3 = {{0, 2, 1, 0, 0}, {0, 0, 0, 3, 4}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}};
+    private int[][] m4 = {{0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
     @Test
     public void testFindSubMatrixIndices() {
@@ -42,5 +43,10 @@ public class Answer4Test {
     @Test
     public void finalTest2() {
         assertThat(Answer4.answer(m3), is(new int[]{7, 6, 8, 21}));
+    }
+
+    @Test
+    public void test3() {
+        Answer4.answer(m4);
     }
 }

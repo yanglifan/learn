@@ -251,8 +251,8 @@ class Answer4 {
         M multiply(M other) {
             F[][] newOne = new F[other.v.length][other.v[0].length];
             for (int i = 0; i < other.v.length; i++) {
+                F[] row = findRow(i);
                 for (int j = 0; j < other.v[i].length; j++) {
-                    F[] row = findRow(i);
                     F[] col = other.findCol(j);
 
                     if (row.length != col.length) {
@@ -327,11 +327,6 @@ class Answer4 {
             F fraction = (F) o;
 
             return n == fraction.n && d == fraction.d;
-        }
-
-        @Override
-        public String toString() {
-            return n + "/" + d;
         }
 
         F multiply(F other) {
