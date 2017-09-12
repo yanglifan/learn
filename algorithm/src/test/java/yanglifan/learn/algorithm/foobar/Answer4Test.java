@@ -15,14 +15,16 @@ public class Answer4Test {
             new int[]{0, 0, 0, 0, 0, 0}
     };
 
-    private int[][] m2 = new int[][]{
-            new int[]{0, 1, 0, 0, 0, 1},
-            new int[]{4, 0, 0, 3, 2, 0},
-            new int[]{0, 0, 0, 0, 0, 0},
-            new int[]{0, 0, 0, 0, 0, 0},
-            new int[]{0, 0, 0, 0, 0, 0},
-            new int[]{0, 0, 0, 0, 0, 0}
+    private int[][] m2 = {
+            {0, 1, 0, 0, 0, 1},
+            {4, 0, 0, 3, 2, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0}
     };
+
+    private int[][] m3 = {{0, 2, 1, 0, 0}, {0, 0, 0, 3, 4}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}};
 
     @Test
     public void testFindSubMatrixIndices() {
@@ -55,6 +57,7 @@ public class Answer4Test {
 
     @Test
     public void finalTest() {
-        Answer4.answer(m1);
+        assertThat(Answer4.answer(m1), is(new int[]{0, 3, 2, 9, 14}));
+        assertThat(Answer4.answer(m3), is(new int[]{7, 6, 8, 21}));
     }
 }
