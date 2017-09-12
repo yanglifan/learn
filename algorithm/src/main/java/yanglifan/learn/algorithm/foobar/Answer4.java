@@ -12,20 +12,8 @@ class Answer4 {
         adjust(m, nonAbsorbIds);
 
         F[][] fm = toFractionMatrix(m);
-        M r = subMatrix(
-                fm,
-                nonAbsorbIds,
-                0,
-                width - nonAbsorbIds.length - 1
-        );
-
-        M q = subMatrix(
-                fm,
-                nonAbsorbIds,
-                width - nonAbsorbIds.length,
-                width - 1
-        );
-
+        M r = subMatrix(fm, nonAbsorbIds, 0, width - nonAbsorbIds.length - 1);
+        M q = subMatrix(fm, nonAbsorbIds, width - nonAbsorbIds.length, width - 1);
 
         M i = createIdentityMatrix(q.height(), q.width());
         M iSubQ = i.sub(q);
@@ -34,38 +22,38 @@ class Answer4 {
         M result = f.multiply(r);
         result.simplify();
 
-        F[] finalFractionArray = result.v[0];
-        int denominator = 0;
-        for (F fr : finalFractionArray) {
-            if (denominator < fr.denominator) {
-                denominator = fr.denominator;
+        F[] ffa = result.v[0];
+        int d = 0;
+        for (F fr : ffa) {
+            if (d < fr.d) {
+                d = fr.d;
             }
         }
 
-        int[] finalResult = new int[finalFractionArray.length + 1];
+        int[] finalResult = new int[ffa.length + 1];
         int k = 0;
-        for (F fr : finalFractionArray) {
-            if (fr.denominator != denominator) {
-                fr.numerator = fr.numerator * (denominator / fr.denominator);
-                fr.denominator = denominator;
+        for (F fr : ffa) {
+            if (fr.d != d) {
+                fr.n = fr.n * (d / fr.d);
+                fr.d = d;
             }
-            finalResult[k++] = fr.numerator;
+            finalResult[k++] = fr.n;
 
         }
 
-        finalResult[finalResult.length - 1] = denominator;
+        finalResult[finalResult.length - 1] = d;
 
         return finalResult;
     }
 
-    private static void adjust(int[][] m, int[] nonAbsorbingMatrixIndices) {
-        for (int index : nonAbsorbingMatrixIndices) {
+    private static void adjust(int[][] m, int[] nonAbsorbIds) {
+        for (int index : nonAbsorbIds) {
             int[] newArray = new int[m[index].length];
             for (int i = 0; i < m[index].length; i++) {
-                if (contains(i, nonAbsorbingMatrixIndices)) {
-                    newArray[i + m[index].length - nonAbsorbingMatrixIndices.length] = m[index][i];
+                if (contains(i, nonAbsorbIds)) {
+                    newArray[i + m[index].length - nonAbsorbIds.length] = m[index][i];
                 } else {
-                    int newIndex = i - nonAbsorbingMatrixIndices.length > 0 ? i - nonAbsorbingMatrixIndices.length : 0;
+                    int newIndex = i - nonAbsorbIds.length > 0 ? i - nonAbsorbIds.length : 0;
                     newArray[newIndex] = m[index][i];
                 }
             }
@@ -84,18 +72,18 @@ class Answer4 {
         return false;
     }
 
-    private static M createIdentityMatrix(int length, int width) {
-        F[][] identityMatrix = new F[length][width];
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < width; j++) {
+    private static M createIdentityMatrix(int l, int w) {
+        F[][] im = new F[l][w];
+        for (int i = 0; i < l; i++) {
+            for (int j = 0; j < w; j++) {
                 if (i == j) {
-                    identityMatrix[i][j] = new F(1, 1);
+                    im[i][j] = new F(1, 1);
                 } else {
-                    identityMatrix[i][j] = new F(0, 1);
+                    im[i][j] = new F(0, 1);
                 }
             }
         }
-        return new M(identityMatrix);
+        return new M(im);
     }
 
     private static F[][] toFractionMatrix(int[][] matrix) {
@@ -196,7 +184,7 @@ class M {
     M inverse() {
         if (height() == 2) {
             F p = v[0][0].multiply(v[1][1]).sub(v[0][1].multiply(v[1][0]));
-            p = new F(p.denominator, p.numerator);
+            p = new F(p.d, p.n);
             F[][] inv = new F[2][2];
             inv[0][0] = v[1][1].multiply(p);
             inv[0][1] = v[0][1].multiply(p).multiply(new F(-1, 1));
@@ -210,9 +198,9 @@ class M {
         for (int i = 0; i < height(); i++) {
             for (int j = 0; j < width(); j++) {
                 if ((i + j) % 2 == 0) {
-                    inv[i][j] = getMatrixResult(confactor(v, i + 1, j + 1)).multiply(new F(a.denominator, a.numerator));
+                    inv[i][j] = getMatrixResult(confactor(v, i + 1, j + 1)).multiply(new F(a.d, a.n));
                 } else {
-                    inv[i][j] = getMatrixResult(confactor(v, i + 1, j + 1)).multiply(new F(-a.denominator, a.numerator));
+                    inv[i][j] = getMatrixResult(confactor(v, i + 1, j + 1)).multiply(new F(-a.d, a.n));
                 }
             }
         }
@@ -234,7 +222,7 @@ class M {
                 F newValue = getMatrixResult(confactor(data, 1, i + 1));
                 nums[i] = data[0][i].multiply(newValue);
             } else {
-                nums[i] = new F(-data[0][i].numerator, data[0][i].denominator)
+                nums[i] = new F(-data[0][i].n, data[0][i].d)
                         .multiply(getMatrixResult(confactor(data, 1, i + 1)));
             }
         }
@@ -311,26 +299,26 @@ class M {
 }
 
 class F {
-    int numerator;
-    int denominator;
+    int n;
+    int d;
 
-    F(int numerator, int denominator) {
-        this.numerator = numerator;
-        this.denominator = denominator;
+    F(int n, int d) {
+        this.n = n;
+        this.d = d;
     }
 
     void simplify() {
         int common = 1;
-        for (int k = denominator; k > 0; k--) {
-            if (numerator % k == 0 && denominator % k == 0) {
+        for (int k = d; k > 0; k--) {
+            if (n % k == 0 && d % k == 0) {
                 common = k;
                 break;
             }
         }
 
         if (common != 1) {
-            numerator = numerator / common;
-            denominator = denominator / common;
+            n = n / common;
+            d = d / common;
         }
     }
 
@@ -341,27 +329,27 @@ class F {
 
         F fraction = (F) o;
 
-        return numerator == fraction.numerator && denominator == fraction.denominator;
+        return n == fraction.n && d == fraction.d;
     }
 
     @Override
     public String toString() {
-        return numerator + "/" + denominator;
+        return n + "/" + d;
     }
 
     F multiply(F other) {
-        return new F(this.numerator * other.numerator, this.denominator * other.denominator);
+        return new F(this.n * other.n, this.d * other.d);
     }
 
     F plus(F other) {
-        int newThisNumerator = this.numerator * other.denominator;
-        int newOtherNumerator = other.numerator * this.denominator;
-        return new F(newThisNumerator + newOtherNumerator, this.denominator * other.denominator);
+        int newThisNumerator = this.n * other.d;
+        int newOtherNumerator = other.n * this.d;
+        return new F(newThisNumerator + newOtherNumerator, this.d * other.d);
     }
 
     F sub(F other) {
-        int newThisNumerator = this.numerator * other.denominator;
-        int newOtherNumerator = other.numerator * this.denominator;
-        return new F(newThisNumerator - newOtherNumerator, this.denominator * other.denominator);
+        int newThisNumerator = this.n * other.d;
+        int newOtherNumerator = other.n * this.d;
+        return new F(newThisNumerator - newOtherNumerator, this.d * other.d);
     }
 }
