@@ -5,65 +5,64 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 1. Find Matrix Q [done]
- * 2. Find Matrix R [done]
+ * 1. Find M Q [done]
+ * 2. Find M R [done]
  * 3. Calculate I - Q
  * 4. Calculate (I - Q) ^ -1 (F)
  * 5. Calculate FR
- * 6. Simplify the final Matrix
+ * 6. Simplify the final M
  *
  * @author Yang Lifan
  */
-public class Answer4 {
-    public static int[] answer(int[][] m) {
+class Answer4 {
+    static int[] answer(int[][] m) {
         int width = m[0].length;
         int[] nonAbsorbingMatrixIndices = findSubMatrixIndices(m);
 
         adjustMatrix(m, nonAbsorbingMatrixIndices);
 
         Fraction[][] fractionMatrix = toFractionMatrix(m);
-        Fraction[][] matrixR = findSubMatrix(
+        M r = findSubMatrix(
                 fractionMatrix,
                 nonAbsorbingMatrixIndices,
                 0,
                 width - nonAbsorbingMatrixIndices.length - 1
         );
 
-        Fraction[][] matrixQ = findSubMatrix(
+        M q = findSubMatrix(
                 fractionMatrix,
                 nonAbsorbingMatrixIndices,
                 width - nonAbsorbingMatrixIndices.length,
                 width - 1
         );
 
-        new Matrix(matrixQ).simplify();
 
-        Fraction[][] identityMatrix = createIdentityMatrix(matrixQ.length, matrixQ[0].length);
-        Matrix iSubQ = new Matrix(identityMatrix).sub(new Matrix(matrixQ));
+        M i = createIdentityMatrix(q.height(), q.width());
+        M iSubQ = i.sub(q);
         Fraction[][] matrixF = MatrixUtils.getInverseMatrix(iSubQ.value);
 
-        Matrix mF = new Matrix(matrixF);
-        mF.simplify();
+        M f = new M(matrixF);
+        f.simplify();
 
-        Matrix result = mF.multiply(new Matrix(matrixR));
+        M result = f.multiply(r);
         result.simplify();
 
         Fraction[] finalFractionArray = result.value[0];
         int denominator = 0;
-        for (Fraction f : finalFractionArray) {
-            if (denominator < f.denominator) {
-                denominator = f.denominator;
+        for (Fraction fr : finalFractionArray) {
+            if (denominator < fr.denominator) {
+                denominator = fr.denominator;
             }
         }
 
         int[] finalResult = new int[finalFractionArray.length + 1];
-        int i = 0;
-        for (Fraction f : finalFractionArray) {
-            if (f.denominator != denominator) {
-                f.numerator = f.numerator * (denominator / f.denominator);
-                f.denominator = denominator;
+        int k = 0;
+        for (Fraction fr : finalFractionArray) {
+            if (fr.denominator != denominator) {
+                fr.numerator = fr.numerator * (denominator / fr.denominator);
+                fr.denominator = denominator;
             }
-            finalResult[i++] = f.numerator;
+            finalResult[k++] = fr.numerator;
 
         }
 
@@ -98,7 +97,7 @@ public class Answer4 {
         return false;
     }
 
-    static Fraction[][] createIdentityMatrix(int length, int width) {
+    private static M createIdentityMatrix(int length, int width) {
         Fraction[][] identityMatrix = new Fraction[length][width];
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
@@ -109,10 +108,10 @@ public class Answer4 {
                 }
             }
         }
-        return identityMatrix;
+        return new M(identityMatrix);
     }
 
-    static Fraction[][] toFractionMatrix(int[][] matrix) {
+    private static Fraction[][] toFractionMatrix(int[][] matrix) {
         Fraction[][] fractionMatrix = new Fraction[matrix.length][matrix[0].length];
         for (int i = 0; i < matrix.length; i++) {
             int denominator = 0;
@@ -153,27 +152,27 @@ public class Answer4 {
         return array;
     }
 
-    static Fraction[][] findSubMatrix(Fraction[][] matrix, int[] nonAbsorbingMatrixIndices, int start, int end) {
+    private static M findSubMatrix(Fraction[][] matrix, int[] nonAbsorbingMatrixIndices, int start, int end) {
         System.out.println("[findSubMatrix] start: " + start + ", end: " + end);
         Fraction[][] subMatrix = new Fraction[nonAbsorbingMatrixIndices.length][end - start];
         int i = 0;
         for (int index : nonAbsorbingMatrixIndices) {
             subMatrix[i++] = Arrays.copyOfRange(matrix[index], start, end + 1);
         }
-        return subMatrix;
+        return new M(subMatrix).simplify();
     }
 }
 
-class Matrix {
+class M {
     Fraction[][] value;
 
-    public Matrix(Fraction[][] value) {
+    M(Fraction[][] value) {
         this.value = value;
     }
 
-    Matrix sub(Matrix m) {
+    M sub(M m) {
         Fraction[][] resultValue = new Fraction[m.value.length][m.value[0].length];
-        Matrix result = new Matrix(resultValue);
+        M result = new M(resultValue);
         for (int i = 0; i < value.length; i++) {
             for (int j = 0; j < value[i].length; j++) {
                 result.value[i][j] = value[i][j].sub(m.value[i][j]);
@@ -182,7 +181,15 @@ class Matrix {
         return result;
     }
 
-    Matrix multiply(Matrix other) {
+    int height() {
+        return value.length;
+    }
+
+    int width() {
+        return value[0].length;
+    }
+
+    M multiply(M other) {
         Fraction[][] newOne = new Fraction[other.value.length][other.value[0].length];
         for (int i = 0; i < other.value.length; i++) {
             for (int j = 0; j < other.value[i].length; j++) {
@@ -201,14 +208,14 @@ class Matrix {
             }
         }
 
-        return new Matrix(newOne);
+        return new M(newOne);
     }
 
-    Fraction[] findRow(int row) {
+    private Fraction[] findRow(int row) {
         return value[row];
     }
 
-    Fraction[] findCol(int col) {
+    private Fraction[] findCol(int col) {
         Fraction[] column = new Fraction[value.length];
         int i = 0;
         for (Fraction[] row : value) {
@@ -218,12 +225,14 @@ class Matrix {
         return column;
     }
 
-    void simplify() {
-        for (int i = 0; i < value.length; i++) {
-            for (int j = 0; j < value[i].length; j++) {
-                value[i][j].simplify();
+    M simplify() {
+        for (Fraction[] i : value) {
+            for (Fraction j : i) {
+                j.simplify();
             }
         }
+
+        return this;
     }
 }
 
@@ -325,7 +334,7 @@ class Fraction {
         this.denominator = denominator;
     }
 
-    public void simplify() {
+    void simplify() {
         int common = 1;
         for (int k = denominator; k > 0; k--) {
             if (numerator % k == 0 && denominator % k == 0) {
@@ -341,21 +350,13 @@ class Fraction {
     }
 
     @Override
-    public int hashCode() {
-        int result = numerator;
-        result = 31 * result + denominator;
-        return result;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Fraction fraction = (Fraction) o;
 
-        if (numerator != fraction.numerator) return false;
-        return denominator == fraction.denominator;
+        return numerator == fraction.numerator && denominator == fraction.denominator;
     }
 
     @Override

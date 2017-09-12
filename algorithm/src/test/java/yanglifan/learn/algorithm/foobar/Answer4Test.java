@@ -35,27 +35,6 @@ public class Answer4Test {
     }
 
     @Test
-    public void testFindSubMatrix() {
-        int[] indices = Answer4.findSubMatrixIndices(m1);
-
-        Fraction[][] f = Answer4.toFractionMatrix(m1);
-        Fraction[][] matrixR = Answer4.findSubMatrix(f, indices, 0, m1[0].length - indices.length - 1);
-        assertThat(matrixR, is(new Fraction[][]{
-                new Fraction[]{
-                        new Fraction(0, 2),
-                        new Fraction(1, 2),
-                        new Fraction(0, 2),
-                        new Fraction(0, 2)
-                },
-                new Fraction[]{
-                        new Fraction(4, 9),
-                        new Fraction(0, 9),
-                        new Fraction(0, 9),
-                        new Fraction(3, 9)}
-        }));
-    }
-
-    @Test
     public void finalTest1() {
         assertThat(Answer4.answer(m1), is(new int[]{0, 3, 2, 9, 14}));
     }
