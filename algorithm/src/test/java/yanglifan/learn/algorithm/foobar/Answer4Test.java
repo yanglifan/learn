@@ -25,28 +25,40 @@ public class Answer4Test {
     };
 
     private int[][] m3 = {{0, 2, 1, 0, 0}, {0, 0, 0, 3, 4}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}};
-    private int[][] m4 = {{0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
 
     @Test
-    public void testFindSubMatrixIndices() {
-        int[] indices = Answer4.findSubMatrixIndices(m1);
-        assertThat(indices, is(new Integer[]{0, 1}));
-        indices = Answer4.findSubMatrixIndices(m2);
-        assertThat(indices, is(new Integer[]{0, 1}));
-    }
-
-    @Test
-    public void finalTest1() {
+    public void test1() {
         assertThat(Answer4.answer(m1), is(new int[]{0, 3, 2, 9, 14}));
     }
 
     @Test
-    public void finalTest2() {
+    public void test2() {
         assertThat(Answer4.answer(m3), is(new int[]{7, 6, 8, 21}));
     }
 
     @Test
-    public void test3() {
-        Answer4.answer(m4);
+    public void test() {
+        assertThat(Answer4.answer(new int[][]{
+                {0, 1, 0, 0, 1},
+                {0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0},
+                {1, 0, 0, 0, 0},
+                {0, 0, 3, 1, 0}
+        }), is(new int[]{1, 1}));
     }
+
+    @Test
+    public void test3() {
+        assertThat(Answer4.answer(new int[][]{
+                {1, 2, 3, 0, 0, 0},
+                {4, 5, 6, 0, 0, 0},
+                {7, 8, 9, 1, 0, 0},
+                {0, 0, 0, 0, 1, 2},
+                {0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0}
+        }), is(new int[]{1, 2, 3}));
+    }
+
+
 }

@@ -1,6 +1,5 @@
 package yanglifan.learn.algorithm.foobar;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,19 +11,19 @@ class Answer4 {
         adjust(m, nonAbsorbIds);
 
         F[][] fm = toFractionMatrix(m);
-        M r = subMatrix(fm, nonAbsorbIds, 0, width - nonAbsorbIds.length - 1);
+        int w = width - nonAbsorbIds.length - 1 < 0 ? 0 : width - nonAbsorbIds.length - 1;
+        M r = subMatrix(fm, nonAbsorbIds, 0, w);
         M q = subMatrix(fm, nonAbsorbIds, width - nonAbsorbIds.length, width - 1);
 
-        M i = createIdentityMatrix(q.height(), q.width());
-        M iSubQ = i.sub(q);
+        M iSubQ = iSubQ(q);
         M f = iSubQ.inverse();
 
         M result = f.multiply(r);
-        result.simplify();
 
         F[] ffa = result.v[0];
         int d = 0;
         for (F fr : ffa) {
+            fr.simplify();
             if (d < fr.d) {
                 d = fr.d;
             }
@@ -50,7 +49,8 @@ class Answer4 {
             int[] newArray = new int[m[index].length];
             for (int i = 0; i < m[index].length; i++) {
                 if (contains(i, nonAbsorbIds)) {
-                    newArray[i + m[index].length - nonAbsorbIds.length] = m[index][i];
+                    int newIndex = i + m.length - nonAbsorbIds.length < m.length - 1 ? i + m.length - nonAbsorbIds.length : m.length - 1;
+                    newArray[newIndex] = m[index][i];
                 } else {
                     int newIndex = i - nonAbsorbIds.length > 0 ? i - nonAbsorbIds.length : 0;
                     newArray[newIndex] = m[index][i];
@@ -71,18 +71,18 @@ class Answer4 {
         return false;
     }
 
-    private static M createIdentityMatrix(int l, int w) {
-        F[][] im = new F[l][w];
-        for (int i = 0; i < l; i++) {
-            for (int j = 0; j < w; j++) {
+    private static M iSubQ(M q) {
+        for (int i = 0; i < q.width(); i++) {
+            for (int j = 0; j < q.width(); j++) {
+                F f = q.v[i][j];
                 if (i == j) {
-                    im[i][j] = new F(1, 1);
+                    f.n = f.d - f.n;
                 } else {
-                    im[i][j] = new F(0, 1);
+                    f.n = -f.n;
                 }
             }
         }
-        return new M(im);
+        return q;
     }
 
     private static F[][] toFractionMatrix(int[][] matrix) {
@@ -101,7 +101,8 @@ class Answer4 {
     }
 
     static int[] findSubMatrixIndices(int[][] matrix) {
-        List<Integer> notAbsorbingIndices = new ArrayList<>();
+        int[] notAbsorbingIndices = new int[matrix.length];
+        int j = 0;
         for (int i = 0; i < matrix.length; i++) {
             boolean nonAbsorbingRow = false;
             for (int num : matrix[i]) {
@@ -111,11 +112,11 @@ class Answer4 {
                 }
             }
             if (nonAbsorbingRow) {
-                notAbsorbingIndices.add(i);
+                notAbsorbingIndices[j++] = i;
             }
         }
 
-        return toIntArray(notAbsorbingIndices);
+        return Arrays.copyOf(notAbsorbingIndices, j);
     }
 
     private static int[] toIntArray(List<Integer> integerArray) {
@@ -226,17 +227,7 @@ class Answer4 {
             for (int i = 0; i < data.length; i++) {
                 result = result.plus(nums[i]);
             }
-            return result;
-        }
-
-        M sub(M m) {
-            F[][] resultValue = new F[m.v.length][m.v[0].length];
-            M result = new M(resultValue);
-            for (int i = 0; i < v.length; i++) {
-                for (int j = 0; j < v[i].length; j++) {
-                    result.v[i][j] = v[i][j].sub(m.v[i][j]);
-                }
-            }
+            result.simplify();
             return result;
         }
 
@@ -317,16 +308,6 @@ class Answer4 {
                 n = n / common;
                 d = d / common;
             }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            F fraction = (F) o;
-
-            return n == fraction.n && d == fraction.d;
         }
 
         F multiply(F other) {
