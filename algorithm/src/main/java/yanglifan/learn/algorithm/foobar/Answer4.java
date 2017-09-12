@@ -4,35 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * 1. Find M Q [done]
- * 2. Find M R [done]
- * 3. Calculate I - Q
- * 4. Calculate (I - Q) ^ -1 (F)
- * 5. Calculate FR
- * 6. Simplify the final M
- *
- * @author Yang Lifan
- */
 class Answer4 {
     static int[] answer(int[][] m) {
         int width = m[0].length;
-        int[] nonAbsorbingMatrixIndices = findSubMatrixIndices(m);
+        int[] nonAbsorbIds = findSubMatrixIndices(m);
 
-        adjustMatrix(m, nonAbsorbingMatrixIndices);
+        adjust(m, nonAbsorbIds);
 
-        F[][] fractionMatrix = toFractionMatrix(m);
-        M r = findSubMatrix(
-                fractionMatrix,
-                nonAbsorbingMatrixIndices,
+        F[][] fm = toFractionMatrix(m);
+        M r = subMatrix(
+                fm,
+                nonAbsorbIds,
                 0,
-                width - nonAbsorbingMatrixIndices.length - 1
+                width - nonAbsorbIds.length - 1
         );
 
-        M q = findSubMatrix(
-                fractionMatrix,
-                nonAbsorbingMatrixIndices,
-                width - nonAbsorbingMatrixIndices.length,
+        M q = subMatrix(
+                fm,
+                nonAbsorbIds,
+                width - nonAbsorbIds.length,
                 width - 1
         );
 
@@ -68,7 +58,7 @@ class Answer4 {
         return finalResult;
     }
 
-    private static void adjustMatrix(int[][] m, int[] nonAbsorbingMatrixIndices) {
+    private static void adjust(int[][] m, int[] nonAbsorbingMatrixIndices) {
         for (int index : nonAbsorbingMatrixIndices) {
             int[] newArray = new int[m[index].length];
             for (int i = 0; i < m[index].length; i++) {
@@ -149,8 +139,8 @@ class Answer4 {
         return array;
     }
 
-    private static M findSubMatrix(F[][] matrix, int[] nonAbsorbingMatrixIndices, int start, int end) {
-        System.out.println("[findSubMatrix] start: " + start + ", end: " + end);
+    private static M subMatrix(F[][] matrix, int[] nonAbsorbingMatrixIndices, int start, int end) {
+        System.out.println("[subMatrix] start: " + start + ", end: " + end);
         F[][] subMatrix = new F[nonAbsorbingMatrixIndices.length][end - start];
         int i = 0;
         for (int index : nonAbsorbingMatrixIndices) {
