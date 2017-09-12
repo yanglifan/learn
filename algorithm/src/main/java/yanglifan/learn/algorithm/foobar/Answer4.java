@@ -1,6 +1,16 @@
 package yanglifan.learn.algorithm.foobar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * 1. Find Matrix R
+ * 2. Find Matrix Q
+ * 3. Calculate I - Q
+ * 4. Calculate (I - Q) ^ -1 (F)
+ * 5. Calculate FR
+ * 6. Simplify the final Matrix
+ *
  * @author Yang Lifan
  */
 public class Answer4 {
@@ -17,6 +27,37 @@ public class Answer4 {
             }
             System.out.println();
         }
+    }
+
+    public static int[] answer(int[][] m) {
+        int[] nonAbsorbingMatrixIndices = findSubMatrixIndices(m);
+        return null;
+    }
+
+    static int[] findSubMatrixIndices(int[][] matrix) {
+        List<Integer> notAbsorbingIndices = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            boolean nonAbsorbingRow = false;
+            for (int num : matrix[i]) {
+                if (num != 0) {
+                    nonAbsorbingRow = true;
+                    break;
+                }
+            }
+            if (nonAbsorbingRow) {
+                notAbsorbingIndices.add(i);
+            }
+        }
+
+        return toIntArray(notAbsorbingIndices);
+    }
+
+    private static int[] toIntArray(List<Integer> integerArray) {
+        int[] array = new int[integerArray.size()];
+        for (int i = 0; i < integerArray.size(); i++) {
+            array[i] = integerArray.get(i);
+        }
+        return array;
     }
 }
 
