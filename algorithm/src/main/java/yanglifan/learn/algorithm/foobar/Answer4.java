@@ -1,6 +1,7 @@
 package yanglifan.learn.algorithm.foobar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,21 +15,6 @@ import java.util.List;
  * @author Yang Lifan
  */
 public class Answer4 {
-    public static void main(String[] args) {
-        Fraction[][] inversed = MatrixUtils.getInverseMatrix(new Fraction[][]{
-                new Fraction[]{new Fraction(1, 1), new Fraction(-1, 2)},
-                new Fraction[]{new Fraction(-4, 9), new Fraction(1, 1)}
-        });
-
-
-        for (Fraction[] row : inversed) {
-            for (Fraction f : row) {
-                System.out.print(f + "\t");
-            }
-            System.out.println();
-        }
-    }
-
     public static int[] answer(int[][] m) {
         int[] nonAbsorbingMatrixIndices = findSubMatrixIndices(m);
         return null;
@@ -58,6 +44,15 @@ public class Answer4 {
             array[i] = integerArray.get(i);
         }
         return array;
+    }
+
+    static int[][] findSubMatrix(int[][] matrix, int[] nonAbsorbingMatrixIndices, int start, int end) {
+        int[][] subMatrix = new int[nonAbsorbingMatrixIndices.length][end - start];
+        int i = 0;
+        for (int index : nonAbsorbingMatrixIndices) {
+            subMatrix[i++] = Arrays.copyOfRange(matrix[index], start, end + 1);
+        }
+        return subMatrix;
     }
 }
 
