@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 1. Find Matrix R
- * 2. Find Matrix Q
+ * 1. Find Matrix Q [done]
+ * 2. Find Matrix R [done]
  * 3. Calculate I - Q
  * 4. Calculate (I - Q) ^ -1 (F)
  * 5. Calculate FR
