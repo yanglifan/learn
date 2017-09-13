@@ -251,8 +251,14 @@ class Answer4 {
         }
 
         F simplify() {
+            if (n == d) {
+                d = 1;
+                n = 1;
+                return this;
+            }
+
             int common = 1;
-            for (int k = d; k > 0; k--) {
+            for (int k = d / 2; k > 0; k--) {
                 if (n % k == 0 && d % k == 0) {
                     common = k;
                     break;
