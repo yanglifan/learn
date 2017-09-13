@@ -251,19 +251,18 @@ class Answer4 {
         }
 
         F simplify() {
+            if (n == 0) {
+                d = 1;
+                return this;
+            }
+
             if (n == d) {
                 d = 1;
                 n = 1;
                 return this;
             }
 
-            int common = 1;
-            for (int k = d / 2; k > 0; k--) {
-                if (n % k == 0 && d % k == 0) {
-                    common = k;
-                    break;
-                }
-            }
+            int common = gcd();
 
             if (common != 1) {
                 n = n / common;
@@ -286,6 +285,18 @@ class Answer4 {
             int newThisNumerator = this.n * other.d;
             int newOtherNumerator = other.n * this.d;
             return new F(newThisNumerator - newOtherNumerator, this.d * other.d);
+        }
+
+        private int gcd() {
+            int m = d;
+            int k = n;
+            int t;
+            while (m % k != 0) {
+                t = k;
+                k = m % k;
+                m = t;
+            }
+            return k;
         }
     }
 }
