@@ -29,11 +29,11 @@ class Answer4 {
         M result = f2.multiply(r);
 
         F[] ffa = result.v[0];
-        int d = 0;
+        long d = ffa[0].d;
         for (F fr : ffa) {
             fr.simplify();
-            if (d < fr.d) {
-                d = Long.valueOf(fr.d).intValue();
+            if (d % fr.d != 0) {
+                d = d * fr.d / gcd(fr.d, d);
             }
         }
 
@@ -47,7 +47,7 @@ class Answer4 {
             finalResult[k++] = Long.valueOf(fr.n).intValue();
         }
 
-        finalResult[finalResult.length - 1] = d;
+        finalResult[finalResult.length - 1] = Long.valueOf(d).intValue();
 
         return finalResult;
     }
@@ -136,6 +136,20 @@ class Answer4 {
         return new M(subMatrix).simplify();
     }
 
+    private static long gcd(long n, long d) {
+        if (n == 0) {
+            return 1;
+        }
+
+        long t;
+        while (d % n != 0) {
+            t = n;
+            n = d % n;
+            d = t;
+        }
+        return n;
+    }
+
     static class M {
         F[][] v;
 
@@ -176,9 +190,11 @@ class Answer4 {
                 }
             }
 
-            F[][] r = new F[1][n];
-            for (int j = 0; j < n; j++) {
-                r[0][j] = t[0][j + n];
+            F[][] r = new F[n][n];
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    r[i][j] = t[i][j + n];
+                }
             }
             return new M(r).simplify();
         }
@@ -280,20 +296,6 @@ class Answer4 {
             long newThisNumerator = this.n * other.d;
             long newOtherNumerator = other.n * this.d;
             return new F(newThisNumerator - newOtherNumerator, this.d * other.d).simplify();
-        }
-
-        private long gcd(long n, long d) {
-            if (n == 0) {
-                return 1;
-            }
-
-            long t;
-            while (d % n != 0) {
-                t = n;
-                n = d % n;
-                d = t;
-            }
-            return n;
         }
     }
 }
