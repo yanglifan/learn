@@ -60,5 +60,10 @@ public class Answer4Test {
         }), is(new int[]{1, 2, 3}));
     }
 
-
+    @Test
+    public void test4() {
+        assertThat(Answer4.answer(new int[][]{
+                {0}
+        }), is(new int[]{1, 1}));
+    }
 }
