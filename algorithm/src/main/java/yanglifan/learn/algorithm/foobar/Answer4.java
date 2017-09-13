@@ -33,7 +33,7 @@ class Answer4 {
         for (F fr : ffa) {
             fr.simplify();
             if (d < fr.d) {
-                d = fr.d;
+                d = Long.valueOf(fr.d).intValue();
             }
         }
 
@@ -44,7 +44,7 @@ class Answer4 {
                 fr.n = fr.n * (d / fr.d);
                 fr.d = d;
             }
-            finalResult[k++] = fr.n;
+            finalResult[k++] = Long.valueOf(fr.n).intValue();
         }
 
         finalResult[finalResult.length - 1] = d;
@@ -176,11 +176,9 @@ class Answer4 {
                 }
             }
 
-            F[][] r = new F[n][n];
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    r[i][j] = t[i][j + n];
-                }
+            F[][] r = new F[1][n];
+            for (int j = 0; j < n; j++) {
+                r[0][j] = t[0][j + n];
             }
             return new M(r).simplify();
         }
@@ -237,10 +235,10 @@ class Answer4 {
     }
 
     static class F {
-        int n;
-        int d;
+        long n;
+        long d;
 
-        F(int n, int d) {
+        F(long n, long d) {
             this.n = n;
             this.d = d;
         }
@@ -257,7 +255,7 @@ class Answer4 {
                 return this;
             }
 
-            int common = gcd(n, d);
+            long common = gcd(n, d);
 
             if (common != 1) {
                 n = n / common;
@@ -269,31 +267,27 @@ class Answer4 {
         F multiply(F other) {
             this.simplify();
             other.simplify();
-
-            if (this.n * other.n > 100000000 || this.d * other.d > 100000000) {
-                throw new RuntimeException("too big");
-            }
             return new F(this.n * other.n, this.d * other.d).simplify();
         }
 
         F plus(F other) {
-            int newThisNumerator = this.n * other.d;
-            int newOtherNumerator = other.n * this.d;
+            long newThisNumerator = this.n * other.d;
+            long newOtherNumerator = other.n * this.d;
             return new F(newThisNumerator + newOtherNumerator, this.d * other.d).simplify();
         }
 
         F sub(F other) {
-            int newThisNumerator = this.n * other.d;
-            int newOtherNumerator = other.n * this.d;
+            long newThisNumerator = this.n * other.d;
+            long newOtherNumerator = other.n * this.d;
             return new F(newThisNumerator - newOtherNumerator, this.d * other.d).simplify();
         }
 
-        private int gcd(int n, int d) {
+        private long gcd(long n, long d) {
             if (n == 0) {
                 return 1;
             }
 
-            int t;
+            long t;
             while (d % n != 0) {
                 t = n;
                 n = d % n;
