@@ -23,9 +23,10 @@ class Answer4 {
         M q = subMatrix(fm, nonAbsorbIds, width - nonAbsorbIds.length, width - 1);
 
         M iSubQ = iSubQ(q);
-        M f = iSubQ.inverse2();
+        M f = iSubQ.inv();
 
-        M result = f.multiply(r);
+        M f2 = new M(new F[][]{f.v[0]});
+        M result = f2.multiply(r);
 
         F[] ffa = result.v[0];
         int d = 0;
@@ -142,9 +143,11 @@ class Answer4 {
             this.v = value;
         }
 
-        M inverse2() {
+        M inv() {
             int n = v.length;
             F[][] t = new F[n][n * 2];
+
+            this.simplify();
 
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -169,7 +172,9 @@ class Answer4 {
                     if (j != i) {
                         s = t[j][i];
                         for (int k = 0; k < n * 2; k++) {
-                            t[j][k] = t[j][k].sub(s.multiply(t[i][k]));
+                            F m = s.multiply(t[i][k]);
+                            m.simplify();
+                            t[j][k] = t[j][k].sub(m);
                             t[j][k].simplify();
                         }
                     }
@@ -182,7 +187,7 @@ class Answer4 {
                     r[i][j] = t[i][j + n];
                 }
             }
-            return new M(r).simplify();
+            return new M(r);
         }
 
         int width() {
@@ -191,7 +196,7 @@ class Answer4 {
 
         M multiply(M other) {
             F[][] newOne = new F[other.v.length][other.v[0].length];
-            for (int i = 0; i < other.v.length; i++) {
+            for (int i = 0; i < this.v.length; i++) {
                 F[] row = findRow(i);
                 for (int j = 0; j < other.v[i].length; j++) {
                     F[] col = other.findCol(j);
@@ -202,7 +207,7 @@ class Answer4 {
 
                     F r = new F(0, 1);
                     for (int k = 0; k < row.length; k++) {
-                        r = r.plus(row[k].multiply(col[k]));
+                        r = r.plus(row[k].multiply(col[k]).simplify()).simplify();
                     }
                     newOne[i][j] = r;
                 }
@@ -245,7 +250,7 @@ class Answer4 {
             this.d = d;
         }
 
-        void simplify() {
+        F simplify() {
             int common = 1;
             for (int k = d; k > 0; k--) {
                 if (n % k == 0 && d % k == 0) {
@@ -258,6 +263,7 @@ class Answer4 {
                 n = n / common;
                 d = d / common;
             }
+            return this;
         }
 
         F multiply(F other) {
