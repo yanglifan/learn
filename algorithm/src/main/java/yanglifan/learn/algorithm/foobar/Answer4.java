@@ -15,7 +15,15 @@ class Answer4 {
         int width = m[0].length;
         int[] nonAbsorbIds = findSubMatrixIndices(m);
 
-        adjust(m, nonAbsorbIds);
+        int[] absorbIds = new int[m.length - nonAbsorbIds.length];
+        int j = 0;
+        for (int i = 0; i < m.length; i++) {
+            if (locate(i, nonAbsorbIds) == -1) {
+                absorbIds[j++] = i;
+            }
+        }
+
+        adjust(m, nonAbsorbIds, absorbIds);
 
         F[][] fm = toFractionMatrix(m);
         int w = width - nonAbsorbIds.length - 1 < 0 ? 0 : width - nonAbsorbIds.length - 1;
@@ -52,31 +60,33 @@ class Answer4 {
         return finalResult;
     }
 
-    private static void adjust(int[][] m, int[] nonAbsorbIds) {
+    private static void adjust(int[][] m, int[] nonAbsorbIds, int[] absorbIds) {
         for (int index : nonAbsorbIds) {
             int[] newArray = new int[m[index].length];
             for (int i = 0; i < m[index].length; i++) {
-                if (contains(i, nonAbsorbIds)) {
-                    int newIndex = i + m.length - nonAbsorbIds.length < m.length - 1 ? i + m.length - nonAbsorbIds.length : m.length - 1;
-                    newArray[newIndex] = m[index][i];
+                int newIndex;
+                int nonAbsorbPos = locate(i, nonAbsorbIds);
+                if (nonAbsorbPos != -1) {
+                    newIndex = absorbIds.length + nonAbsorbPos;
                 } else {
-                    int newIndex = i - nonAbsorbIds.length > 0 ? i - nonAbsorbIds.length : 0;
-                    newArray[newIndex] = m[index][i];
+                    int absorbPos = locate(i, absorbIds);
+                    newIndex = m.length - (nonAbsorbIds.length + absorbIds.length - absorbPos);
                 }
+                newArray[newIndex] = m[index][i];
             }
 
             m[index] = newArray;
         }
     }
 
-    private static boolean contains(int v, int[] array) {
-        for (int i : array) {
-            if (i == v) {
-                return true;
+    private static int locate(int v, int[] array) {
+        for (int i = 0; i < array.length; i++) {
+            if (v == array[i]) {
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     private static M iSubQ(M q) {
