@@ -1,4 +1,4 @@
-package yanglifan.learn.algorithm.googlefoobar;
+package yanglifan.learn.algorithm.foobar;
 
 import java.util.HashMap;
 import java.util.Map;
