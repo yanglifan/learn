@@ -27,7 +27,7 @@ class EndSubscriber<T> implements Flow.Subscriber<T> {
 
     @Override
     public void onNext(T item) {
-        System.out.println(item);
+        System.out.println("[" + Thread.currentThread().getName() + "] " + item);
         consumedItems.add(item);
         if (countOfRemainingItems.decrementAndGet() > 0) {
             subscription.request(1);

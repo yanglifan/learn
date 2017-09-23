@@ -21,6 +21,7 @@ public class EndSubscriberTest {
         // When
         assertThat(publisher.getNumberOfSubscribers()).isEqualTo(1);
         items.forEach(publisher::submit);
+        System.out.println("[" + Thread.currentThread().getName() + "] Publish All");
         publisher.close();
 
         // Then
