@@ -16,6 +16,7 @@
         <module>java8</module>
         <module>framework</module>
         <module>java9</module>
+        <module>design</module>
     </modules>
 
     <build>

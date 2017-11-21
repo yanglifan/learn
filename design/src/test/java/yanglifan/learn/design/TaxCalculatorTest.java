@@ -23,6 +23,7 @@ public class TaxCalculatorTest {
 
     @Test
     public void calculate() throws Exception {
+        assertThat(taxCalculator.calculate(BigDecimal.valueOf(2100)), is(BigDecimal.ZERO));
         assertThat(taxCalculator.calculate(BigDecimal.valueOf(2200)), is(BigDecimal.ZERO));
         assertThat(taxCalculator.calculate(BigDecimal.valueOf(2700)), is(BigDecimal.valueOf(70)));
         assertThat(taxCalculator.calculate(BigDecimal.valueOf(200000)), is(BigDecimal.valueOf(121550))); // 121550
