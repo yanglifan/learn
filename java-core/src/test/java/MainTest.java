@@ -29,7 +29,7 @@ public class MainTest {
         String json = "{\"name\":\"yanglifan\"}";
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void test() {
         try {
             throw new RuntimeException();
