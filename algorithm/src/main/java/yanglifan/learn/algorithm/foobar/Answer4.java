@@ -1,14 +1,29 @@
 package yanglifan.learn.algorithm.foobar;
 
 import java.util.Arrays;
-import java.util.List;
 
 class Answer4 {
     public static int[] answer(int[][] m) {
+        if (m.length == 1) {
+            if (m[0][0] == 0) {
+                return new int[]{1, 1};
+            } else {
+                return new int[]{0};
+            }
+        }
+
         int width = m[0].length;
         int[] nonAbsorbIds = findSubMatrixIndices(m);
 
-        adjust(m, nonAbsorbIds);
+        int[] absorbIds = new int[m.length - nonAbsorbIds.length];
+        int j = 0;
+        for (int i = 0; i < m.length; i++) {
+            if (locate(i, nonAbsorbIds) == -1) {
+                absorbIds[j++] = i;
+            }
+        }
+
+        adjust(m, nonAbsorbIds, absorbIds);
 
         F[][] fm = toFractionMatrix(m);
         int w = width - nonAbsorbIds.length - 1 < 0 ? 0 : width - nonAbsorbIds.length - 1;
@@ -16,16 +31,17 @@ class Answer4 {
         M q = subMatrix(fm, nonAbsorbIds, width - nonAbsorbIds.length, width - 1);
 
         M iSubQ = iSubQ(q);
-        M f = iSubQ.inverse();
+        M f = iSubQ.inv();
 
-        M result = f.multiply(r);
+        M f2 = new M(new F[][]{f.v[0]});
+        M result = f2.multiply(r);
 
         F[] ffa = result.v[0];
-        int d = 0;
+        long d = ffa[0].d;
         for (F fr : ffa) {
             fr.simplify();
-            if (d < fr.d) {
-                d = fr.d;
+            if (d % fr.d != 0) {
+                d = d * fr.d / gcd(fr.d, d);
             }
         }
 
@@ -36,39 +52,41 @@ class Answer4 {
                 fr.n = fr.n * (d / fr.d);
                 fr.d = d;
             }
-            finalResult[k++] = fr.n;
+            finalResult[k++] = Long.valueOf(fr.n).intValue();
         }
 
-        finalResult[finalResult.length - 1] = d;
+        finalResult[finalResult.length - 1] = Long.valueOf(d).intValue();
 
         return finalResult;
     }
 
-    private static void adjust(int[][] m, int[] nonAbsorbIds) {
+    private static void adjust(int[][] m, int[] nonAbsorbIds, int[] absorbIds) {
         for (int index : nonAbsorbIds) {
             int[] newArray = new int[m[index].length];
             for (int i = 0; i < m[index].length; i++) {
-                if (contains(i, nonAbsorbIds)) {
-                    int newIndex = i + m.length - nonAbsorbIds.length < m.length - 1 ? i + m.length - nonAbsorbIds.length : m.length - 1;
-                    newArray[newIndex] = m[index][i];
+                int newIndex;
+                int nonAbsorbPos = locate(i, nonAbsorbIds);
+                if (nonAbsorbPos != -1) {
+                    newIndex = absorbIds.length + nonAbsorbPos;
                 } else {
-                    int newIndex = i - nonAbsorbIds.length > 0 ? i - nonAbsorbIds.length : 0;
-                    newArray[newIndex] = m[index][i];
+                    int absorbPos = locate(i, absorbIds);
+                    newIndex = m.length - (nonAbsorbIds.length + absorbIds.length - absorbPos);
                 }
+                newArray[newIndex] = m[index][i];
             }
 
             m[index] = newArray;
         }
     }
 
-    private static boolean contains(int v, int[] array) {
-        for (int i : array) {
-            if (i == v) {
-                return true;
+    private static int locate(int v, int[] array) {
+        for (int i = 0; i < array.length; i++) {
+            if (v == array[i]) {
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     private static M iSubQ(M q) {
@@ -119,14 +137,6 @@ class Answer4 {
         return Arrays.copyOf(notAbsorbingIndices, j);
     }
 
-    private static int[] toIntArray(List<Integer> integerArray) {
-        int[] array = new int[integerArray.size()];
-        for (int i = 0; i < integerArray.size(); i++) {
-            array[i] = integerArray.get(i);
-        }
-        return array;
-    }
-
     private static M subMatrix(F[][] matrix, int[] nonAbsorbingMatrixIndices, int start, int end) {
         F[][] subMatrix = new F[nonAbsorbingMatrixIndices.length][end - start];
         int i = 0;
@@ -136,6 +146,20 @@ class Answer4 {
         return new M(subMatrix).simplify();
     }
 
+    private static long gcd(long n, long d) {
+        if (n == 0) {
+            return 1;
+        }
+
+        long t;
+        while (d % n != 0) {
+            t = n;
+            n = d % n;
+            d = t;
+        }
+        return n;
+    }
+
     static class M {
         F[][] v;
 
@@ -143,96 +167,46 @@ class Answer4 {
             this.v = value;
         }
 
-        private F[][] confactor(F[][] data, int h, int v) {
-            int height = data.length;
-            int length = data[0].length;
-            F[][] newData = new F[height - 1][length - 1];
-            for (int i = 0; i < newData.length; i++) {
-                if (i < h - 1) {
-                    for (int j = 0; j < newData[i].length; j++) {
-                        if (j < v - 1) {
-                            newData[i][j] = data[i][j];
-                        } else {
-                            newData[i][j] = data[i][j + 1];
-                        }
-                    }
-                } else {
-                    for (int j = 0; j < newData[i].length; j++) {
-                        if (j < v - 1) {
-                            newData[i][j] = data[i + 1][j];
-                        } else {
-                            newData[i][j] = data[i + 1][j + 1];
-                        }
-                    }
+        M inv() {
+            int n = v.length;
+            F[][] t = new F[n][n * 2];
+
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    t[i][j] = v[i][j];
+                    t[i][j + n] = new F(0, 1);
                 }
-            }
-            return newData;
-        }
-
-        private F[][] trans(F[][] matrix) {
-            F[][] newMatrix = new F[matrix[0].length][matrix.length];
-            for (int i = 0; i < matrix.length; i++) {
-                for (int j = 0; j < matrix[0].length; j++) {
-                    newMatrix[j][i] = matrix[i][j];
-                }
-            }
-            return newMatrix;
-        }
-
-        M inverse() {
-            if (height() == 2) {
-                F p = v[0][0].multiply(v[1][1]).sub(v[0][1].multiply(v[1][0]));
-                p = new F(p.d, p.n);
-                F[][] inv = new F[2][2];
-                inv[0][0] = v[1][1].multiply(p);
-                inv[0][1] = v[0][1].multiply(p).multiply(new F(-1, 1));
-                inv[1][0] = v[1][0].multiply(p).multiply(new F(-1, 1));
-                inv[1][1] = v[0][0].multiply(p);
-                return new M(inv).simplify();
+                t[i][i + n] = new F(1, 1);
             }
 
-            F[][] inv = new F[height()][width()];
-            F a = getMatrixResult(v);
-            for (int i = 0; i < height(); i++) {
-                for (int j = 0; j < width(); j++) {
-                    if ((i + j) % 2 == 0) {
-                        inv[i][j] = getMatrixResult(confactor(v, i + 1, j + 1)).multiply(new F(a.d, a.n));
+            for (int i = 0; i < n; i++) {
+                F s = t[i][i];
+                for (int j = 0; j < n * 2; j++) {
+                    if (t[i][j] == null) {
+                        t[i][j] = new F(0, 1);
                     } else {
-                        inv[i][j] = getMatrixResult(confactor(v, i + 1, j + 1)).multiply(new F(-a.d, a.n));
+                        t[i][j] = t[i][j].multiply(new F(s.d, s.n));
+                    }
+                }
+
+                for (int j = 0; j < n; j++) {
+                    if (j != i) {
+                        s = t[j][i];
+                        for (int k = 0; k < n * 2; k++) {
+                            F m = s.multiply(t[i][k]);
+                            t[j][k] = t[j][k].sub(m);
+                        }
                     }
                 }
             }
 
-            inv = trans(inv);
-
-            return new M(inv);
-        }
-
-        private F getMatrixResult(F[][] data) {
-            if (data.length == 2) {
-                return data[0][0].multiply(data[1][1]).sub(data[0][1].multiply(data[1][0]));
-            }
-            F result = new F(0, 1);
-            int num = data.length;
-            F[] nums = new F[num];
-            for (int i = 0; i < data.length; i++) {
-                if (i % 2 == 0) {
-                    F newValue = getMatrixResult(confactor(data, 1, i + 1));
-                    nums[i] = data[0][i].multiply(newValue);
-                } else {
-                    nums[i] = new F(-data[0][i].n, data[0][i].d)
-                            .multiply(getMatrixResult(confactor(data, 1, i + 1)));
+            F[][] r = new F[n][n];
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    r[i][j] = t[i][j + n];
                 }
             }
-            for (int i = 0; i < data.length; i++) {
-                result = result.plus(nums[i]);
-            }
-            result.simplify();
-            return result;
-        }
-
-        int height() {
-            return v.length;
+            return new M(r).simplify();
         }
 
         int width() {
@@ -241,7 +215,7 @@ class Answer4 {
 
         M multiply(M other) {
             F[][] newOne = new F[other.v.length][other.v[0].length];
-            for (int i = 0; i < other.v.length; i++) {
+            for (int i = 0; i < this.v.length; i++) {
                 F[] row = findRow(i);
                 for (int j = 0; j < other.v[i].length; j++) {
                     F[] col = other.findCol(j);
@@ -252,13 +226,23 @@ class Answer4 {
 
                     F r = new F(0, 1);
                     for (int k = 0; k < row.length; k++) {
-                        r = r.plus(row[k].multiply(col[k]));
+                        r = r.plus(row[k].multiply(col[k]).simplify()).simplify();
                     }
                     newOne[i][j] = r;
                 }
             }
 
             return new M(newOne);
+        }
+
+        M simplify() {
+            for (F[] i : v) {
+                for (F j : i) {
+                    j.simplify();
+                }
+            }
+
+            return this;
         }
 
         private F[] findRow(int row) {
@@ -274,56 +258,54 @@ class Answer4 {
 
             return column;
         }
-
-        M simplify() {
-            for (F[] i : v) {
-                for (F j : i) {
-                    j.simplify();
-                }
-            }
-
-            return this;
-        }
     }
 
     static class F {
-        int n;
-        int d;
+        long n;
+        long d;
 
-        F(int n, int d) {
+        F(long n, long d) {
             this.n = n;
             this.d = d;
         }
 
-        void simplify() {
-            int common = 1;
-            for (int k = d; k > 0; k--) {
-                if (n % k == 0 && d % k == 0) {
-                    common = k;
-                    break;
-                }
+        F simplify() {
+            if (n == 0) {
+                d = 1;
+                return this;
             }
+
+            if (n == d) {
+                d = 1;
+                n = 1;
+                return this;
+            }
+
+            long common = gcd(n, d);
 
             if (common != 1) {
                 n = n / common;
                 d = d / common;
             }
+            return this;
         }
 
         F multiply(F other) {
-            return new F(this.n * other.n, this.d * other.d);
+            this.simplify();
+            other.simplify();
+            return new F(this.n * other.n, this.d * other.d).simplify();
         }
 
         F plus(F other) {
-            int newThisNumerator = this.n * other.d;
-            int newOtherNumerator = other.n * this.d;
-            return new F(newThisNumerator + newOtherNumerator, this.d * other.d);
+            long newThisNumerator = this.n * other.d;
+            long newOtherNumerator = other.n * this.d;
+            return new F(newThisNumerator + newOtherNumerator, this.d * other.d).simplify();
         }
 
         F sub(F other) {
-            int newThisNumerator = this.n * other.d;
-            int newOtherNumerator = other.n * this.d;
-            return new F(newThisNumerator - newOtherNumerator, this.d * other.d);
+            long newThisNumerator = this.n * other.d;
+            long newOtherNumerator = other.n * this.d;
+            return new F(newThisNumerator - newOtherNumerator, this.d * other.d).simplify();
         }
     }
 }

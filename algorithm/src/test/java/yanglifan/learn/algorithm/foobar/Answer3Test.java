@@ -1,6 +1,7 @@
-package yanglifan.learn.algorithm.googlefoobar;
+package yanglifan.learn.algorithm.foobar;
 
 import org.junit.Test;
+import yanglifan.learn.algorithm.foobar.Answer3;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

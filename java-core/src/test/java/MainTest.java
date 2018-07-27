@@ -1,7 +1,11 @@
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 interface Interface1 {
 
@@ -32,5 +36,16 @@ public class MainTest {
         } catch (Exception e) {
             throw null;
         }
+    }
+
+    @Test
+    public void map_eq() {
+        Map<String, String> map1 = new HashMap<>();
+        map1.put("A", "A");
+        map1.put("B", "B");
+        Map<String, String> map2 = new HashMap<>();
+        map2.put("A", "A");
+        map2.put("B", "B");
+        assertEquals(map1, map2);
     }
 }

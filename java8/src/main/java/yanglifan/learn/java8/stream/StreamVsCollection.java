@@ -118,22 +118,23 @@ public class StreamVsCollection {
 
         return albums;
     }
-}
 
-class Album {
-    String name;
+    class Album {
+        String name;
 
-    Collection<Track> tracks = new ArrayList<>();
+        Collection<Track> tracks = new ArrayList<>();
 
-    public Album(String name) {
-        this.name = name;
+        public Album(String name) {
+            this.name = name;
+        }
+    }
+
+    class Track {
+        int rating;
+
+        public Track(int rating) {
+            this.rating = rating;
+        }
     }
 }
 
-class Track {
-    int rating;
-
-    public Track(int rating) {
-        this.rating = rating;
-    }
-}

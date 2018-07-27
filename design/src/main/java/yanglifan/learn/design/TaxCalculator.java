@@ -14,7 +14,7 @@ public class TaxCalculator {
         }
 
         for (int i = 1; i < taxStandardList.size(); i++) {
-            if (income.compareTo(taxStandardList.get(i).getValue()) == 1) {
+            if (income.compareTo(taxStandardList.get(i).getValue()) >= 1) {
                 continue;
             }
 
