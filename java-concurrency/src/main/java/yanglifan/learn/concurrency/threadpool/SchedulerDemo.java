@@ -17,7 +17,8 @@ public class SchedulerDemo {
         AtomicInteger count = new AtomicInteger();
         scheduler.scheduleAtFixedRate(() -> {
             System.out.println(count.getAndIncrement());
-            throw new RuntimeException("except ex");
+            if (count.get() == 8)
+                throw new RuntimeException("test");
         }, 0, 1, TimeUnit.SECONDS);
         Thread.sleep(10000);
     }
