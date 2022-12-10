@@ -130,6 +130,6 @@
 
     <properties>
         <slf4j.version>1.7.12</slf4j.version>
-        <spring.version>4.2.6.RELEASE</spring.version>
+        <spring.version>6.0.0</spring.version>
     </properties>
 </project>
